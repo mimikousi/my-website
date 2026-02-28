@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>統計学のための数学入門30講 — 学習レビュー</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --accent: #c0392b;
+    --accent2: #2c3e6b;
+    --gold: #b8860b;
+    --muted: #6b6b6b;
+    --card-bg: #fffdf7;
+    --border: #d4cfc4;
+    --shadow: rgba(26, 26, 46, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.8;
+    font-weight: 400;
+  }
+
+  /* Hero */
+  .hero {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 80px 40px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(245,240,232,0.03) 59px, rgba(245,240,232,0.03) 60px),
+      repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(245,240,232,0.03) 59px, rgba(245,240,232,0.03) 60px);
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .hero-flex {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    margin-top: 8px;
+  }
+  .hero-cover {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .hero-cover img {
+    width: 180px;
+    border-radius: 4px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+  }
+  .hero-cover img:hover {
+    transform: scale(1.03);
+  }
+  .amazon-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ff9900;
+    color: #111;
+    padding: 8px 18px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .amazon-btn:hover {
+    background: #ffad33;
+    transform: translateY(-1px);
+  }
+  .hero-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 900;
+    line-height: 1.3;
+    margin-bottom: 20px;
+  }
+  .hero h1 span {
+    color: var(--gold);
+  }
+  .hero-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 24px;
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    background: rgba(245,240,232,0.06);
+    border: 1px solid rgba(245,240,232,0.1);
+    border-radius: 6px;
+  }
+  .meta-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .meta-label {
+    color: rgba(245,240,232,0.4);
+    font-size: 11px;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    min-width: 50px;
+  }
+  .meta-value {
+    color: rgba(245,240,232,0.85);
+    font-weight: 500;
+  }
+  .hero-sub {
+    font-size: 15px;
+    color: rgba(245,240,232,0.6);
+    max-width: 600px;
+    line-height: 1.9;
+  }
+  .hero-badges {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .hero-badge {
+    background: rgba(245,240,232,0.08);
+    border: 1px solid rgba(245,240,232,0.15);
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: rgba(245,240,232,0.7);
+  }
+
+  /* Main */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  /* Section Title */
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 32px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title .num {
+    background: var(--ink);
+    color: var(--paper);
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    font-size: 14px;
+    font-family: 'Source Code Pro', monospace;
+    flex-shrink: 0;
+  }
+
+  /* Rating Card */
+  .rating-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 36px;
+    margin-bottom: 48px;
+    box-shadow: 0 2px 20px var(--shadow);
+  }
+  .rating-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .rating-row:last-child { border-bottom: none; }
+  .rating-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .rating-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .rating-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .rating-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+  .rating-fill.high { background: var(--accent); }
+  .rating-fill.mid { background: var(--accent2); }
+  .rating-fill.low { background: var(--gold); }
+  .rating-value {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    width: 36px;
+    text-align: right;
+  }
+
+  /* Summary */
+  .verdict {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 20px;
+    line-height: 2;
+    color: var(--ink);
+    margin-bottom: 48px;
+    padding: 32px;
+    background: linear-gradient(135deg, rgba(184,134,11,0.04), rgba(44,62,107,0.04));
+    border-left: 4px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+  }
+  .verdict strong {
+    color: var(--accent);
+  }
+
+  /* Structure */
+  .structure-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+  .structure-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px var(--shadow);
+    display: grid;
+    grid-template-columns: 8px 1fr;
+    transition: transform 0.2s ease;
+  }
+  .structure-card:hover { transform: translateY(-2px); }
+  .structure-stripe { background: var(--accent2); }
+  .structure-card:nth-child(2) .structure-stripe { background: var(--accent); }
+  .structure-card:nth-child(3) .structure-stripe { background: var(--gold); }
+  .structure-body { padding: 24px 28px; }
+  .structure-part {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .structure-heading {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .structure-detail {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .structure-tag {
+    display: inline-block;
+    background: rgba(44,62,107,0.08);
+    color: var(--accent2);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-top: 10px;
+    font-weight: 500;
+  }
+  .structure-card:nth-child(2) .structure-tag {
+    background: rgba(192,57,43,0.08);
+    color: var(--accent);
+  }
+  .structure-card:nth-child(3) .structure-tag {
+    background: rgba(184,134,11,0.08);
+    color: var(--gold);
+  }
+
+  /* Flow */
+  .flow {
+    margin-bottom: 48px;
+  }
+  .flow-diagram {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 36px;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .flow-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 24px;
+    color: var(--accent2);
+  }
+  .flow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+  }
+  .flow-step {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 28px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    position: relative;
+  }
+  .flow-step.highlight {
+    background: var(--accent);
+  }
+  .flow-step.gold {
+    background: var(--gold);
+    color: #fff;
+  }
+  .flow-arrow {
+    width: 2px;
+    height: 28px;
+    background: var(--border);
+    position: relative;
+  }
+  .flow-arrow::after {
+    content: '▼';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    color: var(--border);
+  }
+
+  /* Insights */
+  .insights {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+  .insight-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .insight-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .insight-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .insight-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* Column highlight */
+  .column-highlight {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    margin-bottom: 48px;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .column-highlight-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .column-highlight-badge {
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+  }
+  .column-highlight-label {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .column-examples {
+    display: grid;
+    gap: 16px;
+  }
+  .column-example {
+    padding: 16px 20px;
+    background: rgba(0,0,0,0.02);
+    border-radius: 6px;
+    border-left: 3px solid var(--accent2);
+  }
+  .column-example-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .column-example-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* Usage Map */
+  .usage-map {
+    margin-bottom: 48px;
+  }
+  .usage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .usage-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 12px var(--shadow);
+    transition: transform 0.2s;
+  }
+  .usage-item:hover { transform: translateY(-2px); }
+  .usage-emoji { font-size: 24px; margin-bottom: 8px; }
+  .usage-label {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .usage-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  .footer-quote {
+    text-align: center;
+    padding: 48px 40px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px;
+    line-height: 2;
+  }
+  .footer-quote .attr {
+    font-size: 12px;
+    color: rgba(245,240,232,0.4);
+    margin-top: 12px;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate {
+    animation: fadeUp 0.6s ease forwards;
+    opacity: 0;
+  }
+  .animate:nth-child(2) { animation-delay: 0.1s; }
+  .animate:nth-child(3) { animation-delay: 0.2s; }
+  .animate:nth-child(4) { animation-delay: 0.3s; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 48px 20px 40px; }
+    .hero-flex { flex-direction: column; align-items: center; gap: 24px; }
+    .hero-cover img { width: 140px; }
+    .hero-text { text-align: center; }
+    .hero-meta { grid-template-columns: 1fr; text-align: left; }
+    .hero-badges { justify-content: center; }
+    .main { padding: 40px 20px 60px; }
+    .rating-row { grid-template-columns: 1fr; gap: 8px; }
+    .usage-grid { grid-template-columns: 1fr; }
+    .flow-step { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-label">Book Review & Study Notes</div>
+    <div class="hero-flex">
+      <div class="hero-cover">
+        <img src="https://www.asakura.co.jp/user_data/product_image/11633/1.jpg" alt="統計学のための数学入門30講 表紙" />
+        <a href="https://www.amazon.co.jp/dp/4254116330/" class="amazon-btn" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Amazon で見る
+        </a>
+      </div>
+      <div class="hero-text">
+        <h1>統計学のための<br><span>数学入門30講</span></h1>
+        <div class="hero-meta">
+          <div class="meta-row"><span class="meta-label">著者</span><span class="meta-value">永田 靖</span></div>
+          <div class="meta-row"><span class="meta-label">出版社</span><span class="meta-value">朝倉書店</span></div>
+          <div class="meta-row"><span class="meta-label">シリーズ</span><span class="meta-value">科学のことばとしての数学</span></div>
+          <div class="meta-row"><span class="meta-label">刊行</span><span class="meta-value">2005年3月 ／ A5判 ／ 215頁</span></div>
+          <div class="meta-row"><span class="meta-label">ISBN</span><span class="meta-value" style="font-family:'Source Code Pro',monospace;">978-4-254-11633-5</span></div>
+          <div class="meta-row"><span class="meta-label">定価</span><span class="meta-value">¥3,190（税込）</span></div>
+        </div>
+        <p class="hero-sub">統計検定1級合格者が再読して感じた、この本の魅力と活用法を図解で整理しました。</p>
+        <div class="hero-badges">
+          <span class="hero-badge">📐 微積分</span>
+          <span class="hero-badge">📊 線形代数</span>
+          <span class="hero-badge">🔢 多変数関数</span>
+          <span class="hero-badge">📝 コラム43本</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- 総合評価 -->
+  <div class="section-title"><span class="num">1</span>総合評価</div>
+
+  <div class="rating-card animate">
+    <div class="rating-row">
+      <div class="rating-label">復習のしやすさ</div>
+      <div class="rating-bar-wrap">
+        <div class="rating-bar"><div class="rating-fill high" style="width:95%"></div></div>
+        <div class="rating-value">9.5</div>
+      </div>
+    </div>
+    <div class="rating-row">
+      <div class="rating-label">コンパクトさ</div>
+      <div class="rating-bar-wrap">
+        <div class="rating-bar"><div class="rating-fill high" style="width:95%"></div></div>
+        <div class="rating-value">9.5</div>
+      </div>
+    </div>
+    <div class="rating-row">
+      <div class="rating-label">コラムの質</div>
+      <div class="rating-bar-wrap">
+        <div class="rating-bar"><div class="rating-fill high" style="width:100%"></div></div>
+        <div class="rating-value">10</div>
+      </div>
+    </div>
+    <div class="rating-row">
+      <div class="rating-label">統計学との接続</div>
+      <div class="rating-bar-wrap">
+        <div class="rating-bar"><div class="rating-fill mid" style="width:90%"></div></div>
+        <div class="rating-value">9.0</div>
+      </div>
+    </div>
+    <div class="rating-row">
+      <div class="rating-label">初学者向け</div>
+      <div class="rating-bar-wrap">
+        <div class="rating-bar"><div class="rating-fill low" style="width:40%"></div></div>
+        <div class="rating-value">4.0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 一言で言うと -->
+  <div class="verdict animate">
+    勉強するための本というより、<strong>「こんな法則あったな」と思い出すための本</strong>。<br>
+    コンパクトにまとまっていて、短時間で一気に復習できる。<br>
+    統計学の<strong>"最強の副読本"</strong>かもしれない。
+  </div>
+
+  <!-- 書籍構成 -->
+  <div class="section-title"><span class="num">2</span>書籍の3部構成と統計検定対応</div>
+
+  <div class="structure-grid animate">
+    <div class="structure-card">
+      <div class="structure-stripe"></div>
+      <div class="structure-body">
+        <div class="structure-part">Part 1</div>
+        <div class="structure-heading">第1部：基礎と1変数関数の微積分</div>
+        <div class="structure-detail">統計学の土台となる微積分の基礎。確率密度関数の積分、最尤推定での微分など、統計学で頻出する計算技法をカバー。</div>
+        <span class="structure-tag">→ 統計検定1級向け</span>
+      </div>
+    </div>
+    <div class="structure-card">
+      <div class="structure-stripe"></div>
+      <div class="structure-body">
+        <div class="structure-part">Part 2</div>
+        <div class="structure-heading">第2部：線形代数</div>
+        <div class="structure-detail">内積・射影行列・固有値分解・分割行列など、多変量解析に直結するトピック群。ベクトルの定義次第で相関係数や分散共分散行列が導ける流れが秀逸。</div>
+        <span class="structure-tag">→ 統計検定準1級向け</span>
+      </div>
+    </div>
+    <div class="structure-card">
+      <div class="structure-stripe"></div>
+      <div class="structure-body">
+        <div class="structure-part">Part 3</div>
+        <div class="structure-heading">第3部：多変数関数の微積分</div>
+        <div class="structure-detail">多重積分、ヤコビアンなど、多変量分布やベイズ統計で必要な数学的道具を整理。</div>
+        <span class="structure-tag">→ 統計検定1級向け</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 核心：内積から統計量へ -->
+  <div class="section-title"><span class="num">3</span>核心の流れ：内積 → 統計量</div>
+
+  <div class="flow">
+    <div class="flow-diagram">
+      <div class="flow-title">ベクトル x と y の定義を変えるだけで統計量が導ける</div>
+      <div class="flow-steps">
+        <div class="flow-step">内積 ⟨x, y⟩ の定義</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step highlight">ベクトル x, y の意味づけを変更</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step gold">相関係数 ・ 分散共分散行列 ・ 相関係数行列</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 射影と重回帰 -->
+  <div class="section-title"><span class="num">4</span>射影行列と重回帰の幾何学的理解</div>
+
+  <div class="flow">
+    <div class="flow-diagram">
+      <div class="flow-title">重回帰モデル y = Xβ + ε の幾何学的解釈</div>
+      <div class="flow-steps">
+        <div class="flow-step">観測ベクトル y</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step highlight">X の列空間への射影</div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0; background: none;">
+          <div style="background: var(--accent2); color: var(--paper); padding: 14px; border-radius: 6px; text-align: center;">
+            <div style="font-size: 12px; opacity: 0.7;">予測値</div>
+            <div style="font-weight: 700;">ŷ = Xβ̂</div>
+            <div style="font-size: 11px; opacity: 0.6; margin-top: 4px;">列空間への射影</div>
+          </div>
+          <div style="background: var(--gold); color: #fff; padding: 14px; border-radius: 6px; text-align: center;">
+            <div style="font-size: 12px; opacity: 0.7;">残差</div>
+            <div style="font-weight: 700;">ε = y − ŷ</div>
+            <div style="font-size: 11px; opacity: 0.6; margin-top: 4px;">直交補空間への射影</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- コラム「統計学ではこう使う」 -->
+  <div class="section-title"><span class="num">5</span>コラム「統計学ではこう使う」の魅力</div>
+
+  <div class="column-highlight animate">
+    <div class="column-highlight-header">
+      <span class="column-highlight-badge">全43本</span>
+      <span class="column-highlight-label">教科書にはない切り口で統計学を捉え直せる</span>
+    </div>
+    <div class="column-examples">
+      <div class="column-example">
+        <div class="column-example-title">例：多重共線性のコラム</div>
+        <div class="column-example-desc">相関係数行列の行列式がゼロに近いとき、相関係数のわずかな違いで逆行列が大きく変化することを具体的に説明。数学的な「条件数」の概念と統計学的な「多重共線性」の問題が直結する。</div>
+      </div>
+      <div class="column-example">
+        <div class="column-example-title">例：射影行列のコラム</div>
+        <div class="column-example-desc">重回帰における予測値と残差を「射影」として幾何学的に理解。線形代数と統計学がスッと繋がる体験ができる。</div>
+      </div>
+      <div class="column-example">
+        <div class="column-example-title">コラムの共通する良さ</div>
+        <div class="column-example-desc">"なぜその数学が必要なのか"が腑に落ちる。数式だけで終わらず、統計学からアタマが離れないように導いてくれる。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- この本の強み -->
+  <div class="section-title"><span class="num">6</span>この本の4つの強み</div>
+
+  <div class="insights animate">
+    <div class="insight-card">
+      <div class="insight-icon">⚡</div>
+      <div class="insight-title">心理的ハードルの低さ</div>
+      <div class="insight-text">コンパクトにまとまっているので復習の心理的ハードルが低い。これが最大の魅力。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">🔗</div>
+      <div class="insight-title">数学 × 統計の接続</div>
+      <div class="insight-text">線形代数と統計学がスッと繋がる。「なぜその数学が必要か」が腑に落ちる。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">📝</div>
+      <div class="insight-title">コラム43本の充実</div>
+      <div class="insight-text">教科書にはない切り口で統計学を捉え直せる秀逸なコラム群。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon">🎯</div>
+      <div class="insight-title">統計検定対策に最適</div>
+      <div class="insight-text">準1級〜1級の数学基盤を効率よく固められる構成。</div>
+    </div>
+  </div>
+
+  <!-- 活用タイミング -->
+  <div class="section-title"><span class="num">7</span>おすすめ活用タイミング</div>
+
+  <div class="usage-map">
+    <div class="usage-grid">
+      <div class="usage-item">
+        <div class="usage-emoji">🏁</div>
+        <div class="usage-label">統計検定1級の前に</div>
+        <div class="usage-desc">準備として数学基盤を確認</div>
+      </div>
+      <div class="usage-item">
+        <div class="usage-emoji">📚</div>
+        <div class="usage-label">数理統計学の教科書の後に</div>
+        <div class="usage-desc">久保川・黒木を一周した後に数学との繋がりを腹落ちさせる</div>
+      </div>
+      <div class="usage-item">
+        <div class="usage-emoji">🏆</div>
+        <div class="usage-label">合格後の復習に</div>
+        <div class="usage-desc">知識のメンテナンスとして短時間で一気に復習</div>
+      </div>
+      <div class="usage-item">
+        <div class="usage-emoji">💡</div>
+        <div class="usage-label">「あの法則何だっけ？」の時</div>
+        <div class="usage-desc">思い出すための辞書的な使い方</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer Quote -->
+<div class="footer-quote">
+  もしかすると、統計学の<strong>"最強の副読本"</strong>なのかもしれない。
+  <div class="attr">— 学習レビューより</div>
+</div>
+
+</body>
+</html>
