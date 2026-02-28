@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>『調べるチカラ』読書感想</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --accent: #c0392b;
+    --accent-light: #e74c3c;
+    --warm: #d4a574;
+    --warm-light: #e8d5b7;
+    --teal: #16a085;
+    --teal-dark: #0e7a64;
+    --blue: #2c6fbb;
+    --purple: #7b4ea3;
+    --gold: #d4a017;
+    --shadow: rgba(26, 26, 46, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ─── Hero ─── */
+  .hero {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: linear-gradient(160deg, #1a1a2e 0%, #2d2d4a 40%, #3d2b3d 100%);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 20% 50%, rgba(192, 57, 43, 0.15), transparent),
+      radial-gradient(ellipse 500px 500px at 80% 30%, rgba(44, 111, 187, 0.1), transparent);
+  }
+
+  .hero-kanji {
+    position: absolute;
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    opacity: 0.04;
+    color: #fff;
+    pointer-events: none;
+    user-select: none;
+  }
+  .hero-kanji:nth-child(1) { font-size: 18rem; top: -5%; left: -5%; animation: float1 20s ease-in-out infinite; }
+  .hero-kanji:nth-child(2) { font-size: 12rem; bottom: -5%; right: -3%; animation: float2 25s ease-in-out infinite; }
+  .hero-kanji:nth-child(3) { font-size: 8rem; top: 20%; right: 15%; animation: float3 18s ease-in-out infinite; }
+
+  @keyframes float1 { 0%, 100% { transform: translate(0, 0) rotate(-2deg); } 50% { transform: translate(15px, 20px) rotate(1deg); } }
+  @keyframes float2 { 0%, 100% { transform: translate(0, 0) rotate(1deg); } 50% { transform: translate(-10px, -15px) rotate(-1deg); } }
+  @keyframes float3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(10px, 10px); } }
+
+  .hero-inner {
+    display: flex;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 5rem);
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+    max-width: 1000px;
+    animation: fadeUp 1s ease-out;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Book Cover (3D) ─── */
+  .book-wrapper {
+    flex-shrink: 0;
+    perspective: 800px;
+    animation: fadeUp 1s ease-out 0.2s both;
+  }
+
+  .book-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .book-3d {
+    width: 200px;
+    height: 290px;
+    position: relative;
+    transform: rotateY(-8deg);
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+  }
+
+  .book-3d:hover {
+    transform: rotateY(-2deg) translateY(-5px);
+  }
+
+  .book-cover {
+    width: 100%;
+    height: 100%;
+    border-radius: 2px 8px 8px 2px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      8px 8px 30px rgba(0,0,0,0.4),
+      2px 2px 8px rgba(0,0,0,0.2);
+    background: linear-gradient(170deg, #f7f3ea 0%, #e8e0d0 50%, #d9cfc0 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem 1.2rem;
+  }
+
+  /*
+   * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   *  ■ 実際の書籍カバー画像に差し替える方法 ■
+   *
+   *  1. 書籍の表紙画像を cover.jpg として
+   *     このHTMLと同じフォルダに配置
+   *
+   *  2. 下記の .book-cover-image のコメントを外す
+   *
+   *  3. .book-cover 内の .cover-* 要素群は
+   *     そのままでもOK（画像の下に隠れます）
+   * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   */
+  /*
+  .book-cover-image {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+  }
+  .book-cover-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  */
+
+  .book-cover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.05), rgba(0,0,0,0.1));
+    z-index: 6;
+  }
+
+  .book-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, rgba(255,255,255,0.15) 0%, transparent 40%, transparent 60%, rgba(0,0,0,0.03) 100%);
+    pointer-events: none;
+    z-index: 7;
+  }
+
+  .cover-label {
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #fff;
+    background: var(--accent);
+    padding: 0.2em 0.8em;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+  }
+
+  .cover-title-main {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 1.35rem;
+    color: var(--ink);
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+    margin-bottom: 0.2rem;
+  }
+
+  .cover-title-accent { color: var(--accent); }
+
+  .cover-subtitle {
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: #666;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+    margin-bottom: auto;
+    padding-top: 0.3rem;
+  }
+
+  .cover-line {
+    width: 50%;
+    height: 2px;
+    background: var(--accent);
+    margin: 0.8rem 0;
+  }
+
+  .cover-author {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #444;
+    letter-spacing: 0.15em;
+  }
+
+  .cover-publisher {
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 0.5rem;
+    color: #888;
+    letter-spacing: 0.1em;
+    margin-top: 0.2rem;
+  }
+
+  .book-spine {
+    position: absolute;
+    left: -14px;
+    top: 0;
+    width: 14px;
+    height: 100%;
+    background: linear-gradient(180deg, #b8a88a, #a89878, #b8a88a);
+    transform: rotateY(90deg);
+    transform-origin: right;
+    border-radius: 2px 0 0 2px;
+  }
+
+  /* ─── Hero Text ─── */
+  .hero-content { text-align: left; }
+
+  .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 0.35em 1.2em;
+    border-radius: 2px;
+    margin-bottom: 1.2rem;
+    animation: fadeUp 1s ease-out 0.3s both;
+  }
+
+  .hero-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: #fff;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.15em;
+    line-height: 1.3;
+    animation: fadeUp 1s ease-out 0.4s both;
+  }
+
+  .hero-title .accent { color: var(--accent-light); }
+
+  .hero-subtitle {
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 1.2rem;
+    animation: fadeUp 1s ease-out 0.5s both;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem 1.5rem;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 1s ease-out 0.6s both;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .meta-item span:first-child {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+  }
+
+  .amazon-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.6em 1.4em;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    animation: fadeUp 1s ease-out 0.7s both;
+  }
+
+  .amazon-link:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  /* ─── Section ─── */
+  .section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    margin-bottom: 2.5rem;
+    position: relative;
+    display: inline-block;
+  }
+
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: var(--accent);
+  }
+
+  /* ─── Points Grid ─── */
+  .points-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+
+  .point-card {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 1.2rem;
+    align-items: start;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 20px var(--shadow);
+    border-left: 4px solid transparent;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    opacity: 0;
+    animation: slideIn 0.6s ease-out forwards;
+  }
+
+  .point-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(26, 26, 46, 0.12);
+  }
+
+  .point-card:nth-child(1) { border-left-color: var(--accent); animation-delay: 0.1s; }
+  .point-card:nth-child(2) { border-left-color: var(--blue); animation-delay: 0.15s; }
+  .point-card:nth-child(3) { border-left-color: var(--teal); animation-delay: 0.2s; }
+  .point-card:nth-child(4) { border-left-color: var(--purple); animation-delay: 0.25s; }
+  .point-card:nth-child(5) { border-left-color: var(--gold); animation-delay: 0.3s; }
+  .point-card:nth-child(6) { border-left-color: var(--blue); animation-delay: 0.35s; }
+  .point-card:nth-child(7) { border-left-color: var(--teal-dark); animation-delay: 0.4s; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .point-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+
+  .point-card:nth-child(1) .point-icon { background: rgba(192,57,43,0.08); }
+  .point-card:nth-child(2) .point-icon { background: rgba(44,111,187,0.08); }
+  .point-card:nth-child(3) .point-icon { background: rgba(22,160,133,0.08); }
+  .point-card:nth-child(4) .point-icon { background: rgba(123,78,163,0.08); }
+  .point-card:nth-child(5) .point-icon { background: rgba(212,160,23,0.08); }
+  .point-card:nth-child(6) .point-icon { background: rgba(44,111,187,0.08); }
+  .point-card:nth-child(7) .point-icon { background: rgba(14,122,100,0.08); }
+
+  .point-num {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+  }
+
+  .point-card:nth-child(1) .point-num { color: var(--accent); }
+  .point-card:nth-child(2) .point-num { color: var(--blue); }
+  .point-card:nth-child(3) .point-num { color: var(--teal); }
+  .point-card:nth-child(4) .point-num { color: var(--purple); }
+  .point-card:nth-child(5) .point-num { color: var(--gold); }
+  .point-card:nth-child(6) .point-num { color: var(--blue); }
+  .point-card:nth-child(7) .point-num { color: var(--teal-dark); }
+
+  .point-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+
+  /* ─── Timeline ─── */
+  .timeline-section {
+    background: linear-gradient(180deg, var(--paper) 0%, #ece5d8 100%);
+  }
+
+  .timeline {
+    position: relative;
+    padding: 2rem 0;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--warm), var(--accent), var(--teal));
+    transform: translateX(-50%);
+    border-radius: 2px;
+  }
+
+  .timeline-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 3rem;
+    position: relative;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  .timeline-item:nth-child(1) { animation-delay: 0.2s; }
+  .timeline-item:nth-child(2) { animation-delay: 0.4s; }
+  .timeline-item:nth-child(3) { animation-delay: 0.6s; }
+  .timeline-item:last-child { margin-bottom: 0; }
+
+  .tl-left, .tl-right { flex: 1; padding: 0 2rem; }
+
+  .tl-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid;
+    background: var(--paper);
+    flex-shrink: 0;
+    z-index: 2;
+    position: relative;
+  }
+
+  .timeline-item:nth-child(1) .tl-dot { border-color: var(--warm); }
+  .timeline-item:nth-child(2) .tl-dot { border-color: var(--accent); }
+  .timeline-item:nth-child(3) .tl-dot { border-color: var(--teal); }
+
+  .tl-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px var(--shadow);
+  }
+
+  .tl-era {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+
+  .timeline-item:nth-child(1) .tl-era { color: var(--warm); }
+  .timeline-item:nth-child(2) .tl-era { color: var(--accent); }
+  .timeline-item:nth-child(3) .tl-era { color: var(--teal); }
+
+  .tl-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .tl-desc { font-size: 0.9rem; color: #555; line-height: 1.7; }
+
+  .tl-emoji { font-size: 2.5rem; text-align: center; }
+
+  .timeline-item:nth-child(odd) .tl-left { text-align: right; }
+
+  /* ─── Reflection ─── */
+  .reflection-section {
+    background: linear-gradient(160deg, #1a1a2e 0%, #2d2d4a 60%, #3d2b3d 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .reflection-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 600px 400px at 70% 50%, rgba(22, 160, 133, 0.1), transparent);
+  }
+
+  .reflection-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .reflection-inner .section-label { color: var(--teal); }
+
+  .reflection-quote {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    color: #fff;
+    line-height: 2;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 0.3s forwards;
+  }
+
+  .reflection-quote .highlight {
+    background: linear-gradient(transparent 60%, rgba(22, 160, 133, 0.3) 60%);
+    padding: 0 0.1em;
+  }
+
+  .reflection-body {
+    font-size: 1rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 2;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 0.5s forwards;
+  }
+
+  /* ─── Footer ─── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.75rem;
+    color: #999;
+    background: var(--paper);
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 700px) {
+    .hero-inner { flex-direction: column; text-align: center; }
+    .hero-content { text-align: center; }
+    .hero-meta { justify-content: center; }
+    .book-3d { width: 160px; height: 232px; }
+    .cover-title-main { font-size: 1.1rem; }
+    .cover-subtitle { font-size: 0.5rem; }
+    .timeline::before { left: 20px; }
+    .timeline-item { flex-direction: column; align-items: flex-start; padding-left: 50px; }
+    .tl-dot { position: absolute; left: 10px; top: 0; }
+    .tl-left, .tl-right { padding: 0; text-align: left !important; }
+    .tl-left { margin-bottom: 0.5rem; }
+    .point-card { grid-template-columns: 56px 1fr; padding: 1.2rem; }
+    .point-icon { width: 56px; height: 56px; font-size: 1.4rem; }
+  }
+
+  @media (min-width: 701px) {
+    .points-grid { grid-template-columns: 1fr 1fr; }
+    .point-card:nth-child(7) {
+      grid-column: 1 / -1;
+      max-width: 50%;
+      margin: 0 auto;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════ Hero ════════ -->
+<header class="hero">
+  <span class="hero-kanji">調</span>
+  <span class="hero-kanji">力</span>
+  <span class="hero-kanji">知</span>
+
+  <div class="hero-inner">
+
+    <!-- Book Cover (3D) -->
+    <div class="book-wrapper">
+      <a class="book-link" href="https://www.amazon.co.jp/dp/B0799HFH96/" target="_blank" rel="noopener noreferrer">
+        <div class="book-3d">
+          <div class="book-spine"></div>
+          <div class="book-cover">
+            <!--
+              ■ 実画像に差し替える場合 ■
+              下の div.book-cover-image のコメントを外し、
+              cover.jpg を同フォルダに配置してください。
+            -->
+            <!--
+            <div class="book-cover-image">
+              <img src="cover.jpg" alt="調べるチカラ 表紙">
+            </div>
+            -->
+            <div class="cover-label">日本経済新聞出版</div>
+            <div class="cover-title-main">
+              調べる<br><span class="cover-title-accent">チカラ</span>
+            </div>
+            <div class="cover-subtitle">「情報洪水」を泳ぎ切る技術</div>
+            <div class="cover-line"></div>
+            <div class="cover-author">野崎 篤志</div>
+            <div class="cover-publisher">日経BP</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Hero Text -->
+    <div class="hero-content">
+      <div class="badge">BOOK REVIEW ── 読了</div>
+      <h1 class="hero-title">『調べる<span class="accent">チカラ</span>』</h1>
+      <p class="hero-subtitle">「情報洪水」を泳ぎ切る技術 ── 7つのポイントと考察</p>
+
+      <div class="hero-meta">
+        <div class="meta-item">
+          <span>著者</span> 野崎 篤志
+        </div>
+        <div class="meta-item">
+          <span>出版</span> 日経BP（日本経済新聞出版）
+        </div>
+        <div class="meta-item">
+          <span>発行</span> 2018年1月
+        </div>
+        <div class="meta-item">
+          <span>頁数</span> 238ページ
+        </div>
+      </div>
+
+      <a class="amazon-link" href="https://www.amazon.co.jp/dp/B0799HFH96/" target="_blank" rel="noopener noreferrer">
+        📖 Amazon で見る →
+      </a>
+    </div>
+
+  </div>
+</header>
+
+<!-- ════════ 7 Points ════════ -->
+<section class="section">
+  <p class="section-label">Key Points</p>
+  <h2 class="section-title">7つのポイント</h2>
+
+  <div class="points-grid">
+    <div class="point-card">
+      <div class="point-icon">🔍</div>
+      <div>
+        <div class="point-num">POINT 01</div>
+        <div class="point-title">好奇心を持つ</div>
+      </div>
+    </div>
+    <div class="point-card">
+      <div class="point-icon">🎯</div>
+      <div>
+        <div class="point-num">POINT 02</div>
+        <div class="point-title">調べる目的をハッキリさせる</div>
+      </div>
+    </div>
+    <div class="point-card">
+      <div class="point-icon">📚</div>
+      <div>
+        <div class="point-num">POINT 03</div>
+        <div class="point-title">日々情報に触れて知識ストックを増やし情報感度を上げる</div>
+      </div>
+    </div>
+    <div class="point-card">
+      <div class="point-icon">⚖️</div>
+      <div>
+        <div class="point-num">POINT 04</div>
+        <div class="point-title">事実と意見・解釈および意図・意思を区別する</div>
+      </div>
+    </div>
+    <div class="point-card">
+      <div class="point-icon">🌐</div>
+      <div>
+        <div class="point-num">POINT 05</div>
+        <div class="point-title">インターネットのみの情報収集に偏らない</div>
+      </div>
+    </div>
+    <div class="point-card">
+      <div class="point-icon">🛠️</div>
+      <div>
+        <div class="point-num">POINT 06</div>
+        <div class="point-title">ツールやアプリを活用する</div>
+      </div>
+    </div>
+    <div class="point-card">
+      <div class="point-icon">📡</div>
+      <div>
+        <div class="point-num">POINT 07</div>
+        <div class="point-title">情報発信をする</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ Timeline ════════ -->
+<section class="timeline-section">
+  <div class="section" style="padding-bottom: 4rem;">
+    <p class="section-label">Evolution</p>
+    <h2 class="section-title">調査方法の進化</h2>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-left">
+          <div class="tl-card">
+            <div class="tl-era">BEFORE INTERNET</div>
+            <div class="tl-title">書籍・図書館・専門家</div>
+            <div class="tl-desc">足で稼ぐ情報収集が中心の時代</div>
+          </div>
+        </div>
+        <div class="tl-dot"></div>
+        <div class="tl-right">
+          <div class="tl-emoji">📖</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-left">
+          <div class="tl-emoji">💻</div>
+        </div>
+        <div class="tl-dot"></div>
+        <div class="tl-right">
+          <div class="tl-card">
+            <div class="tl-era">INTERNET AGE</div>
+            <div class="tl-title">検索エンジン・SNS・データベース</div>
+            <div class="tl-desc">調査方法が大きく変革された時代</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-left">
+          <div class="tl-card">
+            <div class="tl-era">AI AGE ── NOW</div>
+            <div class="tl-title">生成AI・対話型リサーチ</div>
+            <div class="tl-desc">さらなる変革が始まっている</div>
+          </div>
+        </div>
+        <div class="tl-dot"></div>
+        <div class="tl-right">
+          <div class="tl-emoji">🤖</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ Reflection ════════ -->
+<section class="reflection-section">
+  <div class="reflection-inner">
+    <p class="section-label">My Thoughts</p>
+    <p class="reflection-quote">
+      AI時代に必要となる<br>
+      <span class="highlight">リサーチ方法</span>も<br>
+      勉強したくなった！
+    </p>
+    <p class="reflection-body">
+      インターネット登場前後で調査方法は大きく変わった。<br>
+      同様に、生成AIの登場でさらに調査方法は変わってくるに違いない。<br>
+      「調べるチカラ」は時代とともに進化し続ける。
+    </p>
+  </div>
+</section>
+
+<footer>
+  © 2026 Book Review ── 『調べるチカラ』読了メモ
+</footer>
+
+</body>
+</html>

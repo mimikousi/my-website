@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>『コンサル一年目が学ぶこと』読書感想</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1b2d;
+    --navy-mid: #1a2d4a;
+    --navy-light: #243b5e;
+    --gold: #c8a84e;
+    --gold-light: #e0c96e;
+    --gold-dim: rgba(200, 168, 78, 0.15);
+    --white: #f8f7f4;
+    --slate: #64748b;
+    --blue-accent: #3b82f6;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --rose: #f43f5e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--white);
+    color: var(--navy);
+    font-family: 'Noto Sans JP', sans-serif;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ─── Hero ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: var(--navy);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, transparent 40%, rgba(200, 168, 78, 0.04) 100%),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 80px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 80px);
+  }
+
+  .hero-stripe {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(200,168,78,0.06), rgba(200,168,78,0.02));
+    clip-path: polygon(30% 0, 100% 0, 100% 100%, 0 100%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    display: flex;
+    align-items: center;
+    gap: clamp(2.5rem, 6vw, 6rem);
+    position: relative;
+    z-index: 2;
+    padding: 3rem 2rem;
+    max-width: 1060px;
+    width: 100%;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Book Cover ─── */
+  .book-wrapper {
+    flex-shrink: 0;
+    perspective: 900px;
+    animation: fadeUp 0.8s ease-out 0.1s both;
+  }
+
+  .book-link { text-decoration: none; color: inherit; display: block; }
+
+  .book-3d {
+    width: 200px;
+    height: 290px;
+    position: relative;
+    transform: rotateY(-7deg);
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+  }
+
+  .book-3d:hover { transform: rotateY(-1deg) translateY(-4px); }
+
+  .book-cover {
+    width: 100%;
+    height: 100%;
+    border-radius: 2px 8px 8px 2px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 10px 10px 40px rgba(0,0,0,0.5), 2px 2px 10px rgba(0,0,0,0.3);
+    background: linear-gradient(160deg, #fffcf0 0%, #f5e6b8 30%, #e8d48b 70%, #d4bc5e 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1.4rem 1rem;
+  }
+
+  /* ━━ 実画像差し替え方法 ━━
+   * 1. cover.jpg を同フォルダに配置
+   * 2. 下記コメントを外す
+   *
+   * .book-cover-image {
+   *   position: absolute; inset: 0; z-index: 5;
+   * }
+   * .book-cover-image img {
+   *   width: 100%; height: 100%; object-fit: cover;
+   * }
+   */
+
+  .book-cover::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.05), rgba(0,0,0,0.15));
+    z-index: 6;
+  }
+
+  .book-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, rgba(255,255,255,0.25) 0%, transparent 35%, transparent 65%, rgba(0,0,0,0.04) 100%);
+    pointer-events: none;
+    z-index: 7;
+  }
+
+  .cv-badge {
+    font-size: 0.5rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    color: #fff;
+    background: var(--navy);
+    padding: 0.25em 0.9em;
+    border-radius: 2px;
+    margin-bottom: 0.6rem;
+  }
+
+  .cv-title {
+    font-weight: 900;
+    font-size: 1.15rem;
+    color: var(--navy);
+    line-height: 1.45;
+    letter-spacing: 0.04em;
+  }
+
+  .cv-title-accent { color: var(--navy-light); font-size: 0.95rem; }
+
+  .cv-sub {
+    font-size: 0.42rem;
+    font-weight: 700;
+    color: #666;
+    letter-spacing: 0.05em;
+    margin-top: 0.3rem;
+    line-height: 1.5;
+    padding: 0 0.3rem;
+  }
+
+  .cv-line {
+    width: 45%;
+    height: 2px;
+    background: var(--navy);
+    margin: 0.7rem 0 0.5rem;
+  }
+
+  .cv-author {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--navy-mid);
+    letter-spacing: 0.12em;
+  }
+
+  .cv-pub {
+    font-size: 0.45rem;
+    color: #888;
+    letter-spacing: 0.08em;
+    margin-top: 0.15rem;
+  }
+
+  .book-spine {
+    position: absolute;
+    left: -14px; top: 0;
+    width: 14px; height: 100%;
+    background: linear-gradient(180deg, #d4bc5e, #c0a84a, #d4bc5e);
+    transform: rotateY(90deg);
+    transform-origin: right;
+    border-radius: 2px 0 0 2px;
+  }
+
+  /* ─── Hero Text ─── */
+  .hero-content { text-align: left; flex: 1; }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    animation: fadeUp 0.8s ease-out 0.2s both;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.8rem, 4.5vw, 3rem);
+    color: #fff;
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+    margin-bottom: 0.6rem;
+    animation: fadeUp 0.8s ease-out 0.3s both;
+  }
+
+  .hero-title .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15em;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: clamp(0.75rem, 1.3vw, 0.95rem);
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.03em;
+    animation: fadeUp 0.8s ease-out 0.4s both;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.4rem;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s ease-out 0.5s both;
+  }
+
+  .meta-item {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.45);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .meta-item .label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.25);
+  }
+
+  .amazon-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: 1px solid rgba(200,168,78,0.4);
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.55em 1.5em;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    animation: fadeUp 0.8s ease-out 0.6s both;
+  }
+
+  .amazon-btn:hover {
+    background: rgba(200,168,78,0.1);
+    border-color: var(--gold);
+  }
+
+  /* ─── Impression Section ─── */
+  .impression {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 5rem 2rem 3rem;
+  }
+
+  .section-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+
+  .section-tag::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--gold);
+  }
+
+  .section-title {
+    font-weight: 900;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+  }
+
+  .impression-text {
+    font-size: 1rem;
+    color: #444;
+    line-height: 2;
+    max-width: 680px;
+  }
+
+  /* ─── 4 Actions ─── */
+  .actions-section {
+    background: var(--navy);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .actions-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 500px 400px at 80% 20%, rgba(200,168,78,0.06), transparent),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 1px, transparent 1px, transparent 80px);
+  }
+
+  .actions-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .actions-inner .section-tag { color: var(--gold-light); }
+  .actions-inner .section-tag::before { background: var(--gold-light); }
+  .actions-inner .section-title { color: #fff; }
+
+  .actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .action-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 2rem 1.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    opacity: 0;
+    animation: fadeUp 0.7s ease-out forwards;
+  }
+
+  .action-card:nth-child(1) { animation-delay: 0.1s; }
+  .action-card:nth-child(2) { animation-delay: 0.2s; }
+  .action-card:nth-child(3) { animation-delay: 0.3s; }
+  .action-card:nth-child(4) { animation-delay: 0.4s; }
+
+  .action-card:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(200,168,78,0.25);
+    transform: translateY(-3px);
+  }
+
+  .action-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+  }
+
+  .action-card:nth-child(1)::before { background: var(--blue-accent); }
+  .action-card:nth-child(2)::before { background: var(--orange); }
+  .action-card:nth-child(3)::before { background: var(--green); }
+  .action-card:nth-child(4)::before { background: var(--rose); }
+
+  .action-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 0.8rem;
+  }
+
+  .action-card:nth-child(1) .action-num { color: var(--blue-accent); }
+  .action-card:nth-child(2) .action-num { color: var(--orange); }
+  .action-card:nth-child(3) .action-num { color: var(--green); }
+  .action-card:nth-child(4) .action-num { color: var(--rose); }
+
+  .action-title {
+    font-weight: 900;
+    font-size: 1.05rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+
+  .action-desc {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.7;
+  }
+
+  .action-chapter {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 0.2em 0.7em;
+    border-radius: 3px;
+    margin-top: 0.8rem;
+  }
+
+  .action-card:nth-child(1) .action-chapter { color: var(--blue-accent); background: rgba(59,130,246,0.12); }
+  .action-card:nth-child(2) .action-chapter { color: var(--orange); background: rgba(245,158,11,0.12); }
+  .action-card:nth-child(3) .action-chapter { color: var(--green); background: rgba(16,185,129,0.12); }
+  .action-card:nth-child(4) .action-chapter { color: var(--rose); background: rgba(244,63,94,0.12); }
+
+  /* ─── Book Structure ─── */
+  .structure-section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .chapters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .ch-card {
+    text-align: center;
+    padding: 2rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(15,27,45,0.08);
+    background: #fff;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+
+  .ch-card:nth-child(1) { animation-delay: 0.1s; }
+  .ch-card:nth-child(2) { animation-delay: 0.2s; }
+  .ch-card:nth-child(3) { animation-delay: 0.3s; }
+  .ch-card:nth-child(4) { animation-delay: 0.4s; }
+
+  .ch-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(15,27,45,0.08);
+  }
+
+  .ch-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+
+  .ch-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--slate);
+    margin-bottom: 0.3rem;
+  }
+
+  .ch-title {
+    font-weight: 900;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+
+  /* ─── Closing ─── */
+  .closing {
+    background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .closing::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 500px 300px at 30% 60%, rgba(200,168,78,0.08), transparent);
+  }
+
+  .closing-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .closing-quote {
+    font-weight: 900;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: #fff;
+    line-height: 2;
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 0.2s forwards;
+  }
+
+  .closing-quote .hl {
+    background: linear-gradient(transparent 55%, rgba(200,168,78,0.25) 55%);
+    padding: 0 0.1em;
+  }
+
+  .closing-body {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 2;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 0.4s forwards;
+  }
+
+  /* ─── Footer ─── */
+  footer {
+    text-align: center;
+    padding: 1.8rem;
+    font-size: 0.7rem;
+    color: #aaa;
+    background: var(--white);
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 768px) {
+    .hero-inner { flex-direction: column; text-align: center; }
+    .hero-content { text-align: center; }
+    .hero-tag { justify-content: center; }
+    .hero-meta { justify-content: center; }
+    .book-3d { width: 160px; height: 232px; }
+    .cv-title { font-size: 1rem; }
+    .actions-grid { grid-template-columns: 1fr; }
+    .chapters { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .chapters { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════ Hero ════════ -->
+<header class="hero">
+  <div class="hero-stripe"></div>
+
+  <div class="hero-inner">
+
+    <!-- Book Cover -->
+    <div class="book-wrapper">
+      <a class="book-link" href="https://www.amazon.co.jp/dp/B00MA671WW" target="_blank" rel="noopener noreferrer">
+        <div class="book-3d">
+          <div class="book-spine"></div>
+          <div class="book-cover">
+            <!--
+            <div class="book-cover-image">
+              <img src="cover.jpg" alt="コンサル一年目が学ぶこと 表紙">
+            </div>
+            -->
+            <div class="cv-badge">DISCOVER 21</div>
+            <div class="cv-title">
+              コンサル<br>
+              <span class="cv-title-accent">一年目が</span><br>
+              学ぶこと
+            </div>
+            <div class="cv-sub">新人・就活生からベテラン社員まで<br>一生役立つ究極のベーシックスキル30選</div>
+            <div class="cv-line"></div>
+            <div class="cv-author">大石 哲之</div>
+            <div class="cv-pub">ディスカヴァー・トゥエンティワン</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Hero Text -->
+    <div class="hero-content">
+      <div class="hero-tag">BOOK REVIEW ── 読了</div>
+      <h1 class="hero-title">
+        コンサル<span class="num">1</span>年目が<br>学ぶこと
+      </h1>
+      <p class="hero-sub">究極のベーシックスキル30選 ── 4つのアクション宣言</p>
+
+      <div class="hero-meta">
+        <div class="meta-item"><span class="label">著者</span> 大石 哲之</div>
+        <div class="meta-item"><span class="label">出版</span> ディスカヴァー21</div>
+        <div class="meta-item"><span class="label">発行</span> 2014年7月</div>
+        <div class="meta-item"><span class="label">頁数</span> 288ページ</div>
+      </div>
+
+      <a class="amazon-btn" href="https://www.amazon.co.jp/dp/B00MA671WW" target="_blank" rel="noopener noreferrer">
+        📖 Amazon で見る →
+      </a>
+    </div>
+
+  </div>
+</header>
+
+<!-- ════════ Impression ════════ -->
+<section class="impression">
+  <div class="section-tag">IMPRESSION</div>
+  <h2 class="section-title">読みやすく、即実践できる一冊</h2>
+  <p class="impression-text">
+    仕事を円滑に進める上で大事なことを、わかりやすい事例で解説してくれているので本当に読みやすかったです。<br>
+    周りを巻き込みながらドンドン成果を出すために、今後は特に下記4点を意識していきたい。
+  </p>
+</section>
+
+<!-- ════════ 4 Actions ════════ -->
+<section class="actions-section">
+  <div class="actions-inner">
+    <div class="section-tag">MY ACTION</div>
+    <h2 class="section-title">今後意識する4つのこと</h2>
+
+    <div class="actions-grid">
+
+      <div class="action-card">
+        <div class="action-num">01</div>
+        <div class="action-title">「課題管理表」を<br>使いこなす</div>
+        <div class="action-desc">プロジェクトの課題を見える化し、漏れなく確実に進捗を管理する。</div>
+        <div class="action-chapter">第3章 デスクワーク術</div>
+      </div>
+
+      <div class="action-card">
+        <div class="action-num">02</div>
+        <div class="action-title">"Quick and Dirty" で<br>スピードを意識</div>
+        <div class="action-desc">完璧を目指すより、まず素早くアウトプットし、フィードバックを得る。</div>
+        <div class="action-chapter">第4章 ビジネスマインド</div>
+      </div>
+
+      <div class="action-card">
+        <div class="action-num">03</div>
+        <div class="action-title">やると言ったことは<br>やり切る（コミット）</div>
+        <div class="action-desc">約束したことを確実に遂行する。信頼の積み重ねがプロの価値を生む。</div>
+        <div class="action-chapter">第4章 ビジネスマインド</div>
+      </div>
+
+      <div class="action-card">
+        <div class="action-num">04</div>
+        <div class="action-title">フォロワーシップ<br>も大事にする</div>
+        <div class="action-desc">リーダーを支え、チーム全体の力を最大化する。貢献の形はひとつじゃない。</div>
+        <div class="action-chapter">第4章 ビジネスマインド</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════ Book Structure ════════ -->
+<section class="structure-section">
+  <div class="section-tag">STRUCTURE</div>
+  <h2 class="section-title">本の全体構成</h2>
+
+  <div class="chapters">
+    <div class="ch-card">
+      <div class="ch-icon">🗣️</div>
+      <div class="ch-num">CHAPTER 1</div>
+      <div class="ch-title">コンサル流<br>話す技術</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon">💡</div>
+      <div class="ch-num">CHAPTER 2</div>
+      <div class="ch-title">コンサル流<br>思考術</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon">📋</div>
+      <div class="ch-num">CHAPTER 3</div>
+      <div class="ch-title">コンサル流<br>デスクワーク術</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-icon">🔥</div>
+      <div class="ch-num">CHAPTER 4</div>
+      <div class="ch-title">プロフェッショナル<br>ビジネスマインド</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ Closing ════════ -->
+<section class="closing">
+  <div class="closing-inner">
+    <div class="section-tag" style="color:var(--gold-light); justify-content:center;">
+      MY THOUGHTS
+    </div>
+    <p class="closing-quote">
+      周りを巻き込みながら<br>
+      <span class="hl">ドンドン成果を出す</span>ために<br>
+      まず自分から動く。
+    </p>
+    <p class="closing-body">
+      コンサルに限らず、あらゆるビジネスパーソンに通じる<br>
+      普遍的なスキルが凝縮された一冊。<br>
+      「今日から使える」という言葉に偽りなし。
+    </p>
+  </div>
+</section>
+
+<footer>
+  © 2026 Book Review ── 『コンサル一年目が学ぶこと』読了メモ
+</footer>
+
+</body>
+</html>
