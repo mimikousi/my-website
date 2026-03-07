@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>統計学のための数学入門30講 — 学習レビュー</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================
+     CSS Custom Properties
+     ============================ */
+  :root {
+    --bg-deep: #06080f;
+    --bg-surface: #0a0c1d;
+    --bg-card: rgba(14, 16, 38, 0.65);
+    --bg-card-hover: rgba(20, 22, 52, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.055);
+    --glass-border-hover: rgba(255, 255, 255, 0.1);
+    --text-primary: #e6e8f4;
+    --text-secondary: rgba(230, 232, 244, 0.55);
+    --text-muted: rgba(230, 232, 244, 0.32);
+    /* このページはアンバー × エメラルドを軸に */
+    --accent-gold: #f5a623;
+    --accent-red: #ff6b6b;
+    --accent-blue: #4e9eff;
+    --accent-teal: #2dd4bf;
+    --accent-purple: #a78bfa;
+    --gradient-main: linear-gradient(135deg, #f5a623, #ff6b6b);
+    --gradient-cool: linear-gradient(135deg, #4e9eff, #2dd4bf);
+    --gradient-purple: linear-gradient(135deg, #a78bfa, #4e9eff);
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+    --shadow-glow: 0 0 60px rgba(245, 166, 35, 0.06);
+  }
+
+  /* ============================
+     Reset & Base
+     ============================ */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', 'Noto Serif JP', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ============================
+     Animated Background
+     ============================ */
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .bg-orbs {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .bg-orbs::before,
+  .bg-orbs::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(130px);
+    animation: orbFloat 22s ease-in-out infinite;
+  }
+  .bg-orbs::before {
+    width: 650px; height: 650px;
+    background: radial-gradient(circle, rgba(245, 166, 35, 0.07), transparent 70%);
+    top: -15%; right: -5%;
+  }
+  .bg-orbs::after {
+    width: 550px; height: 550px;
+    background: radial-gradient(circle, rgba(78, 158, 255, 0.06), transparent 70%);
+    bottom: -10%; left: -10%;
+    animation-delay: -11s;
+    animation-direction: reverse;
+  }
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-60px, 60px) scale(1.08); }
+    66% { transform: translate(50px, -40px) scale(0.96); }
+  }
+
+  /* ============================
+     Scroll Animations
+     ============================ */
+  .reveal {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ============================
+     Navigation Bar
+     ============================ */
+  .navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(6, 8, 15, 0.7);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border-bottom: 1px solid var(--glass-border);
+    transition: all 0.3s;
+  }
+  .navbar.scrolled {
+    padding: 10px 40px;
+    background: rgba(6, 8, 15, 0.94);
+  }
+  .nav-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 2px;
+    background: var(--gradient-main);
+    border-radius: 1px;
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--text-primary); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* ============================
+     Hero Section
+     ============================ */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 40px 80px;
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(245, 166, 35, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+    animation: heroGlow 9s ease-in-out infinite alternate;
+  }
+  @keyframes heroGlow {
+    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  }
+  .hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 40px;
+    padding: 8px 20px;
+    border: 1px solid rgba(245, 166, 35, 0.2);
+    border-radius: 100px;
+    background: rgba(245, 166, 35, 0.04);
+  }
+  .hero-label::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-gold);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.7); }
+  }
+  .hero-flex {
+    display: flex;
+    gap: 60px;
+    align-items: center;
+  }
+  .hero-cover {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .book-frame {
+    position: relative;
+    padding: 4px;
+    border-radius: 12px;
+    background: var(--gradient-main);
+    box-shadow: 0 20px 60px rgba(245, 166, 35, 0.15), 0 0 100px rgba(255, 107, 107, 0.07);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s;
+  }
+  .book-frame:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 30px 80px rgba(245, 166, 35, 0.22), 0 0 120px rgba(255, 107, 107, 0.1);
+  }
+  .book-frame img {
+    width: 200px;
+    border-radius: 10px;
+    display: block;
+  }
+  .amazon-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    color: #000;
+    background: linear-gradient(135deg, #ff9900, #ffb84d);
+    box-shadow: 0 4px 20px rgba(255, 153, 0, 0.3);
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+  }
+  .amazon-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(255, 153, 0, 0.4);
+  }
+  .hero-text { flex: 1; min-width: 0; }
+  .hero h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(30px, 4.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.3;
+    margin-bottom: 28px;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 .accent {
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 32px;
+    margin-bottom: 28px;
+    padding: 20px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(12px);
+  }
+  .meta-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .meta-label {
+    color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+    min-width: 56px;
+  }
+  .meta-value { color: var(--text-secondary); font-weight: 500; }
+  .hero-sub {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    line-height: 2;
+    margin-bottom: 24px;
+  }
+  .hero-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+  .hero-badge {
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s;
+  }
+  .hero-badge:hover {
+    border-color: var(--glass-border-hover);
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+  }
+
+  /* ============================
+     Alert badge (not for beginners)
+     ============================ */
+  .level-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.2);
+    color: var(--accent-red);
+    margin-top: 16px;
+  }
+
+  /* ============================
+     Main Content
+     ============================ */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 120px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ============================
+     Section Header
+     ============================ */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+    background: var(--gradient-main);
+    color: #000;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--glass-border), transparent);
+  }
+
+  /* ============================
+     Glass Card
+     ============================ */
+  .glass {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .glass:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--glass-border-hover);
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* ============================
+     Rating Section
+     ============================ */
+  .rating-card { padding: 40px; margin-bottom: 80px; }
+  .rating-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 54px;
+    gap: 20px;
+    align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.025);
+  }
+  .rating-row:last-child { border-bottom: none; }
+  .rating-label { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
+  .rating-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+  .rating-fill {
+    height: 100%;
+    border-radius: 3px;
+    width: 0;
+    transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+  .rating-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: inherit;
+    box-shadow: 0 0 16px currentColor;
+  }
+  .rating-fill.gold { background: var(--gradient-main); color: var(--accent-gold); }
+  .rating-fill.blue { background: var(--gradient-cool); color: var(--accent-blue); }
+  .rating-fill.purple { background: var(--gradient-purple); color: var(--accent-purple); }
+  .rating-fill.red {
+    background: linear-gradient(135deg, #ff6b6b, #f59e0b);
+    color: var(--accent-red);
+  }
+  .rating-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px;
+    font-weight: 700;
+    text-align: right;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .rating-note {
+    grid-column: 2 / -1;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: -8px;
+    padding-bottom: 4px;
+    font-style: italic;
+  }
+
+  /* ============================
+     Verdict
+     ============================ */
+  .verdict {
+    position: relative;
+    padding: 40px 48px;
+    margin-bottom: 80px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 17px;
+    line-height: 2.3;
+    color: var(--text-primary);
+    overflow: hidden;
+  }
+  .verdict::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gradient-main);
+    border-radius: 2px;
+  }
+  .verdict::after {
+    content: '"';
+    position: absolute;
+    top: -10px; right: 20px;
+    font-size: 160px;
+    font-family: 'Inter', serif;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0.05;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .verdict .highlight {
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+  }
+  .verdict .highlight-blue {
+    background: var(--gradient-cool);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+  }
+
+  /* ============================
+     3-Part Structure
+     ============================ */
+  .structure-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 80px;
+  }
+  .structure-card {
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .structure-part-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .structure-card:nth-child(1) .structure-part-label { color: var(--accent-blue); }
+  .structure-card:nth-child(2) .structure-part-label { color: var(--accent-red); }
+  .structure-card:nth-child(3) .structure-part-label { color: var(--accent-gold); }
+
+  .structure-bar {
+    height: 3px;
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+  .structure-card:nth-child(1) .structure-bar { background: var(--gradient-cool); }
+  .structure-card:nth-child(2) .structure-bar { background: linear-gradient(135deg, var(--accent-red), var(--accent-gold)); }
+  .structure-card:nth-child(3) .structure-bar { background: var(--gradient-main); }
+
+  .structure-heading {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+  .structure-detail {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.9;
+    margin-bottom: 16px;
+  }
+  .structure-tag {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+  .structure-card:nth-child(1) .structure-tag {
+    background: rgba(78, 158, 255, 0.1);
+    color: var(--accent-blue);
+    border: 1px solid rgba(78, 158, 255, 0.2);
+  }
+  .structure-card:nth-child(2) .structure-tag {
+    background: rgba(255, 107, 107, 0.1);
+    color: var(--accent-red);
+    border: 1px solid rgba(255, 107, 107, 0.2);
+  }
+  .structure-card:nth-child(3) .structure-tag {
+    background: rgba(245, 166, 35, 0.1);
+    color: var(--accent-gold);
+    border: 1px solid rgba(245, 166, 35, 0.2);
+  }
+
+  /* ============================
+     Flow Diagrams
+     ============================ */
+  .flow-wrapper {
+    padding: 48px;
+    margin-bottom: 80px;
+  }
+  .flow-heading {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .flow-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .flow-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .flow-steps {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .flow-step {
+    width: 100%;
+    max-width: 560px;
+    padding: 18px 32px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s;
+  }
+  .flow-step:hover {
+    border-color: var(--glass-border-hover);
+    transform: scale(1.015);
+  }
+  .flow-step.origin {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+  }
+  .flow-step.mid {
+    background: rgba(78, 158, 255, 0.09);
+    border-color: rgba(78, 158, 255, 0.18);
+    color: var(--accent-blue);
+  }
+  .flow-result {
+    width: 100%;
+    max-width: 560px;
+    padding: 28px 36px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-main);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .flow-result::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.15), transparent 60%);
+    pointer-events: none;
+  }
+  .flow-result-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.65);
+    margin-bottom: 8px;
+  }
+  .flow-result-text {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #000;
+    line-height: 1.7;
+    position: relative;
+  }
+  .flow-connector {
+    width: 2px;
+    height: 32px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .flow-connector::before {
+    content: '';
+    position: absolute;
+    width: 2px; height: 100%;
+    background: linear-gradient(180deg, var(--glass-border), rgba(245, 166, 35, 0.3));
+  }
+  .flow-connector::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: 8px; height: 8px;
+    border-right: 2px solid rgba(245, 166, 35, 0.4);
+    border-bottom: 2px solid rgba(245, 166, 35, 0.4);
+    transform: rotate(45deg) translateY(-4px);
+  }
+
+  /* Split result (for regression) */
+  .flow-split {
+    width: 100%;
+    max-width: 560px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .flow-split-item {
+    padding: 22px 20px;
+    border-radius: var(--radius-md);
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s;
+  }
+  .flow-split-item:hover {
+    border-color: var(--glass-border-hover);
+    transform: scale(1.015);
+  }
+  .flow-split-item.blue {
+    background: rgba(78, 158, 255, 0.08);
+    border-color: rgba(78, 158, 255, 0.18);
+  }
+  .flow-split-item.gold {
+    background: rgba(245, 166, 35, 0.08);
+    border-color: rgba(245, 166, 35, 0.18);
+  }
+  .split-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .flow-split-item.blue .split-sub { color: var(--accent-blue); opacity: 0.7; }
+  .flow-split-item.gold .split-sub { color: var(--accent-gold); opacity: 0.7; }
+  .split-main {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .flow-split-item.blue .split-main { color: var(--accent-blue); }
+  .flow-split-item.gold .split-main { color: var(--accent-gold); }
+  .split-desc {
+    font-size: 11px;
+    opacity: 0.6;
+  }
+  .flow-split-item.blue .split-desc { color: var(--accent-blue); }
+  .flow-split-item.gold .split-desc { color: var(--accent-gold); }
+
+  /* ============================
+     Column Highlights (43 columns)
+     ============================ */
+  .column-section { margin-bottom: 80px; }
+  .column-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding: 24px 32px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(245, 166, 35, 0.08), rgba(255, 107, 107, 0.05));
+    border: 1px solid rgba(245, 166, 35, 0.15);
+  }
+  .column-badge {
+    padding: 10px 20px;
+    border-radius: 100px;
+    background: var(--gradient-main);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .column-header-text {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.7;
+  }
+  .column-examples {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .column-example-card {
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .column-example-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    border-radius: 20px 20px 0 0;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .column-example-card:hover::before { opacity: 1; }
+  .column-example-card:nth-child(1)::before { background: var(--gradient-cool); }
+  .column-example-card:nth-child(2)::before { background: var(--gradient-main); }
+  .column-example-card:nth-child(3)::before,
+  .column-example-card:nth-child(4)::before { background: var(--gradient-purple); }
+  .column-example-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-family: 'Noto Serif JP', serif;
+  }
+  .column-example-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.9;
+  }
+
+  /* ============================
+     Strengths Grid
+     ============================ */
+  .strengths-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 80px;
+  }
+  .strength-card { padding: 32px; position: relative; overflow: hidden; }
+  .strength-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    border-radius: 20px 20px 0 0;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .strength-card:hover::before { opacity: 1; }
+  .strength-card:nth-child(1)::before { background: var(--gradient-main); }
+  .strength-card:nth-child(2)::before { background: var(--gradient-cool); }
+  .strength-card:nth-child(3)::before { background: var(--gradient-purple); }
+  .strength-card:nth-child(4)::before { background: linear-gradient(135deg, var(--accent-gold), var(--accent-teal)); }
+  .strength-icon {
+    width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 12px;
+    font-size: 22px;
+    margin-bottom: 20px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.02);
+  }
+  .strength-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+  }
+  .strength-text { font-size: 13px; color: var(--text-secondary); line-height: 1.9; }
+
+  /* ============================
+     Usage Timeline
+     ============================ */
+  .usage-section { margin-bottom: 80px; }
+  .usage-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .usage-card {
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .usage-emoji {
+    font-size: 28px;
+    display: block;
+  }
+  .usage-label {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .usage-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+  .usage-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+    align-self: flex-start;
+  }
+  .usage-card:nth-child(1) .usage-tag {
+    background: rgba(78, 158, 255, 0.1); color: var(--accent-blue);
+    border: 1px solid rgba(78, 158, 255, 0.2);
+  }
+  .usage-card:nth-child(2) .usage-tag {
+    background: rgba(245, 166, 35, 0.1); color: var(--accent-gold);
+    border: 1px solid rgba(245, 166, 35, 0.2);
+  }
+  .usage-card:nth-child(3) .usage-tag {
+    background: rgba(45, 212, 191, 0.1); color: var(--accent-teal);
+    border: 1px solid rgba(45, 212, 191, 0.2);
+  }
+  .usage-card:nth-child(4) .usage-tag {
+    background: rgba(167, 139, 250, 0.1); color: var(--accent-purple);
+    border: 1px solid rgba(167, 139, 250, 0.2);
+  }
+
+  /* ============================
+     Footer
+     ============================ */
+  .footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 80px 40px;
+    border-top: 1px solid var(--glass-border);
+  }
+  .footer-quote {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 22px;
+    line-height: 2;
+    margin-bottom: 16px;
+  }
+  .footer-quote .highlight {
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 900;
+  }
+  .footer-attr {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 2px;
+  }
+
+  /* ============================
+     Responsive
+     ============================ */
+  @media (max-width: 768px) {
+    .navbar { padding: 12px 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 20px 60px; min-height: auto; }
+    .hero-flex { flex-direction: column; align-items: center; gap: 32px; }
+    .hero-text { text-align: center; }
+    .hero-meta { grid-template-columns: 1fr; text-align: left; }
+    .hero-badges { justify-content: center; }
+    .hero-sub { text-align: center; margin: 0 auto 24px; }
+    .main { padding: 0 20px 80px; }
+    .structure-grid { grid-template-columns: 1fr; }
+    .strengths-grid { grid-template-columns: 1fr; }
+    .usage-grid { grid-template-columns: 1fr; }
+    .column-examples { grid-template-columns: 1fr; }
+    .flow-wrapper { padding: 28px 20px; }
+    .flow-step { max-width: 100%; padding: 14px 20px; font-size: 13px; }
+    .flow-split { max-width: 100%; }
+    .rating-row { grid-template-columns: 1fr; gap: 8px; }
+    .rating-note { grid-column: 1; }
+    .verdict { padding: 28px 32px; font-size: 15px; }
+  }
+  @media (max-width: 480px) {
+    .book-frame img { width: 160px; }
+    .flow-split { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Animated Background -->
+<div class="bg-grid"></div>
+<div class="bg-orbs"></div>
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo">MATH FOR STATS</div>
+  <ul class="nav-links">
+    <li><a href="#rating">評価</a></li>
+    <li><a href="#structure">構成</a></li>
+    <li><a href="#inner-product">内積</a></li>
+    <li><a href="#projection">射影</a></li>
+    <li><a href="#columns">コラム</a></li>
+    <li><a href="#usage">活用</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-label">Book Review & Study Notes</div>
+    <div class="hero-flex">
+      <div class="hero-cover">
+        <div class="book-frame">
+          <img src="https://www.asakura.co.jp/user_data/product_image/11633/1.jpg" alt="統計学のための数学入門30講 表紙" />
+        </div>
+        <a href="https://www.amazon.co.jp/dp/4254116330/" class="amazon-btn" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Amazon で見る
+        </a>
+      </div>
+      <div class="hero-text">
+        <h1>統計学のための<br><span class="accent">数学入門30講</span></h1>
+        <div class="hero-meta">
+          <div class="meta-row"><span class="meta-label">著者</span><span class="meta-value">永田 靖</span></div>
+          <div class="meta-row"><span class="meta-label">出版社</span><span class="meta-value">朝倉書店</span></div>
+          <div class="meta-row"><span class="meta-label">シリーズ</span><span class="meta-value">科学のことばとしての数学</span></div>
+          <div class="meta-row"><span class="meta-label">刊行</span><span class="meta-value">2005年3月 ／ A5判 ／ 215頁</span></div>
+          <div class="meta-row"><span class="meta-label">ISBN</span><span class="meta-value" style="font-family:'JetBrains Mono',monospace;font-size:12px;">978-4-254-11633-5</span></div>
+          <div class="meta-row"><span class="meta-label">定価</span><span class="meta-value">¥3,190（税込）</span></div>
+        </div>
+        <p class="hero-sub">統計検定1級合格者が再読して感じた、この本の魅力と活用法を図解で整理しました。</p>
+        <div class="hero-badges">
+          <span class="hero-badge">📐 微積分</span>
+          <span class="hero-badge">📊 線形代数</span>
+          <span class="hero-badge">🔢 多変数関数</span>
+          <span class="hero-badge">📝 コラム43本</span>
+        </div>
+        <div class="level-badge">
+          ⚠️ 初学者よりも、数学の基礎を学んだ後の復習に最適な一冊
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- 総合評価 -->
+  <div class="reveal" id="rating">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">総合評価</span>
+      <span class="section-line"></span>
+    </div>
+  </div>
+
+  <div class="glass rating-card reveal">
+    <div class="rating-row">
+      <div class="rating-label">復習のしやすさ</div>
+      <div class="rating-bar"><div class="rating-fill gold" data-width="95"></div></div>
+      <div class="rating-value">9.5</div>
+    </div>
+    <div class="rating-row">
+      <div class="rating-label">コンパクトさ</div>
+      <div class="rating-bar"><div class="rating-fill gold" data-width="95"></div></div>
+      <div class="rating-value">9.5</div>
+    </div>
+    <div class="rating-row">
+      <div class="rating-label">コラムの質</div>
+      <div class="rating-bar"><div class="rating-fill blue" data-width="100"></div></div>
+      <div class="rating-value">10</div>
+    </div>
+    <div class="rating-row">
+      <div class="rating-label">統計学との接続</div>
+      <div class="rating-bar"><div class="rating-fill purple" data-width="90"></div></div>
+      <div class="rating-value">9.0</div>
+    </div>
+    <div class="rating-row">
+      <div class="rating-label">初学者向け</div>
+      <div class="rating-bar"><div class="rating-fill red" data-width="40"></div></div>
+      <div class="rating-value">4.0</div>
+    </div>
+    <div class="rating-note">※ 初学者よりも数学の基礎がある方の復習用として評価</div>
+  </div>
+
+  <!-- 一言 -->
+  <div class="glass verdict reveal">
+    勉強するための本というより、<span class="highlight">「こんな法則あったな」と思い出すための本</span>。<br>
+    コンパクトにまとまっていて、短時間で一気に復習できる。<br>
+    統計学の<span class="highlight-blue">"最強の副読本"</span>かもしれない。
+  </div>
+
+  <!-- 書籍の3部構成 -->
+  <div class="reveal" id="structure">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">書籍の3部構成と統計検定対応</span>
+      <span class="section-line"></span>
+    </div>
+  </div>
+
+  <div class="structure-grid">
+    <div class="glass structure-card reveal reveal-delay-1">
+      <div class="structure-part-label">Part 1</div>
+      <div class="structure-bar"></div>
+      <div class="structure-heading">基礎と1変数関数の微積分</div>
+      <div class="structure-detail">統計学の土台となる微積分の基礎。確率密度関数の積分、最尤推定での微分など、統計学で頻出する計算技法をカバー。</div>
+      <span class="structure-tag">統計検定1級向け</span>
+    </div>
+    <div class="glass structure-card reveal reveal-delay-2">
+      <div class="structure-part-label">Part 2</div>
+      <div class="structure-bar"></div>
+      <div class="structure-heading">線形代数</div>
+      <div class="structure-detail">内積・射影行列・固有値分解・分割行列など、多変量解析に直結するトピック群。ベクトルの定義次第で相関係数や分散共分散行列が導ける流れが秀逸。</div>
+      <span class="structure-tag">統計検定準1級向け</span>
+    </div>
+    <div class="glass structure-card reveal reveal-delay-3">
+      <div class="structure-part-label">Part 3</div>
+      <div class="structure-bar"></div>
+      <div class="structure-heading">多変数関数の微積分</div>
+      <div class="structure-detail">多重積分、ヤコビアンなど、多変量分布やベイズ統計で必要な数学的道具を整理。</div>
+      <span class="structure-tag">統計検定1級向け</span>
+    </div>
+  </div>
+
+  <!-- 核心：内積 → 統計量 -->
+  <div class="reveal" id="inner-product">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">核心の流れ：内積 → 統計量</span>
+      <span class="section-line"></span>
+    </div>
+  </div>
+
+  <div class="glass flow-wrapper reveal">
+    <div class="flow-heading">
+      <div class="flow-title">ベクトル x と y の定義を変えるだけで統計量が導ける</div>
+      <div class="flow-subtitle">inner product → statistical measures</div>
+    </div>
+    <div class="flow-steps">
+      <div class="flow-step origin">内積 ⟨x, y⟩ の定義</div>
+      <div class="flow-connector"></div>
+      <div class="flow-step mid">ベクトル x, y の意味づけを変更</div>
+      <div class="flow-connector"></div>
+      <div class="flow-result">
+        <div class="flow-result-label">導出される統計量</div>
+        <div class="flow-result-text">相関係数 ／ 分散共分散行列 ／ 相関係数行列</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 射影行列と重回帰 -->
+  <div class="reveal" id="projection">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">射影行列と重回帰の幾何学的理解</span>
+      <span class="section-line"></span>
+    </div>
+  </div>
+
+  <div class="glass flow-wrapper reveal">
+    <div class="flow-heading">
+      <div class="flow-title">重回帰モデル y = Xβ + ε の幾何学的解釈</div>
+      <div class="flow-subtitle">projection matrix × regression geometry</div>
+    </div>
+    <div class="flow-steps">
+      <div class="flow-step origin">観測ベクトル y</div>
+      <div class="flow-connector"></div>
+      <div class="flow-step mid">X の列空間への射影</div>
+      <div class="flow-connector"></div>
+      <div class="flow-split">
+        <div class="flow-split-item blue">
+          <div class="split-sub">予測値</div>
+          <div class="split-main">ŷ = Xβ̂</div>
+          <div class="split-desc">列空間への射影</div>
+        </div>
+        <div class="flow-split-item gold">
+          <div class="split-sub">残差</div>
+          <div class="split-main">ε = y − ŷ</div>
+          <div class="split-desc">直交補空間への射影</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- コラム43本 -->
+  <div class="reveal" id="columns">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <span class="section-title">コラム「統計学ではこう使う」の魅力</span>
+      <span class="section-line"></span>
+    </div>
+  </div>
+
+  <div class="column-section">
+    <div class="column-header reveal">
+      <div class="column-badge">全43本</div>
+      <div class="column-header-text">教科書にはない切り口で統計学を捉え直せる<br>数学の「意味」と統計の「必要性」が直結するコラム群</div>
+    </div>
+    <div class="column-examples">
+      <div class="glass column-example-card reveal reveal-delay-1">
+        <div class="column-example-title">例：多重共線性のコラム</div>
+        <div class="column-example-desc">相関係数行列の行列式がゼロに近いとき、相関係数のわずかな違いで逆行列が大きく変化することを具体的に説明。数学的な「条件数」の概念と統計学的な「多重共線性」の問題が直結する。</div>
+      </div>
+      <div class="glass column-example-card reveal reveal-delay-2">
+        <div class="column-example-title">例：射影行列のコラム</div>
+        <div class="column-example-desc">重回帰における予測値と残差を「射影」として幾何学的に理解。線形代数と統計学がスッと繋がる体験ができる。</div>
+      </div>
+      <div class="glass column-example-card reveal reveal-delay-3" style="grid-column: 1 / -1;">
+        <div class="column-example-title">コラム共通の良さ</div>
+        <div class="column-example-desc">"なぜその数学が必要なのか"が腑に落ちる。数式だけで終わらず、統計学からアタマが離れないように導いてくれる。微積分でも線形代数でも、常に統計学への橋が架けられている。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- この本の4つの強み -->
+  <div class="reveal">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <span class="section-title">この本の4つの強み</span>
+      <span class="section-line"></span>
+    </div>
+  </div>
+
+  <div class="strengths-grid">
+    <div class="glass strength-card reveal reveal-delay-1">
+      <div class="strength-icon">⚡</div>
+      <div class="strength-title">心理的ハードルの低さ</div>
+      <div class="strength-text">コンパクトにまとまっているので復習の心理的ハードルが低い。これが最大の魅力。</div>
+    </div>
+    <div class="glass strength-card reveal reveal-delay-2">
+      <div class="strength-icon">🔗</div>
+      <div class="strength-title">数学 × 統計の接続</div>
+      <div class="strength-text">線形代数と統計学がスッと繋がる。「なぜその数学が必要か」が腑に落ちる体験ができる。</div>
+    </div>
+    <div class="glass strength-card reveal reveal-delay-3">
+      <div class="strength-icon">📝</div>
+      <div class="strength-title">コラム43本の充実</div>
+      <div class="strength-text">教科書にはない切り口で統計学を捉え直せる秀逸なコラム群。毎ページに新たな気づきがある。</div>
+    </div>
+    <div class="glass strength-card reveal reveal-delay-4">
+      <div class="strength-icon">🎯</div>
+      <div class="strength-title">統計検定対策に最適</div>
+      <div class="strength-text">準1級〜1級の数学基盤を効率よく固められる構成。試験前の集中復習にも◎。</div>
+    </div>
+  </div>
+
+  <!-- おすすめ活用タイミング -->
+  <div class="reveal" id="usage">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <span class="section-title">おすすめ活用タイミング</span>
+      <span class="section-line"></span>
+    </div>
+  </div>
+
+  <div class="usage-section">
+    <div class="usage-grid">
+      <div class="glass usage-card reveal reveal-delay-1">
+        <span class="usage-emoji">🏁</span>
+        <div class="usage-label">統計検定1級の前に</div>
+        <div class="usage-desc">準備として数学基盤を確認。試験直前のコンパクト復習にも最適。</div>
+        <span class="usage-tag">BEFORE EXAM</span>
+      </div>
+      <div class="glass usage-card reveal reveal-delay-2">
+        <span class="usage-emoji">📚</span>
+        <div class="usage-label">数理統計学の教科書の後に</div>
+        <div class="usage-desc">久保川・黒木を一周した後に数学との繋がりを腹落ちさせるために読む。</div>
+        <span class="usage-tag">AFTER TEXTBOOK</span>
+      </div>
+      <div class="glass usage-card reveal reveal-delay-3">
+        <span class="usage-emoji">🏆</span>
+        <div class="usage-label">合格後の復習に</div>
+        <div class="usage-desc">知識のメンテナンスとして短時間で一気に復習できる頼れる一冊。</div>
+        <span class="usage-tag">AFTER PASSING</span>
+      </div>
+      <div class="glass usage-card reveal reveal-delay-4">
+        <span class="usage-emoji">💡</span>
+        <div class="usage-label">「あの法則何だっけ？」の時</div>
+        <div class="usage-desc">思い出すための辞書的な使い方。すぐに目的の定理・法則へたどり着ける。</div>
+        <span class="usage-tag">REFERENCE</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-quote reveal">
+    もしかすると、統計学の<span class="highlight">"最強の副読本"</span>なのかもしれない。
+  </div>
+  <div class="footer-attr reveal">— 学習レビューより</div>
+</footer>
+
+<script>
+  // ============================
+  // Scroll Reveal
+  // ============================
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ============================
+  // Rating Bar Animation
+  // ============================
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.rating-fill').forEach(fill => {
+          const w = fill.getAttribute('data-width');
+          fill.style.width = w + '%';
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.rating-card').forEach(el => barObserver.observe(el));
+
+  // ============================
+  // Navbar Scroll Effect
+  // ============================
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // ============================
+  // Smooth Scroll
+  // ============================
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+
+</body>
+</html>
