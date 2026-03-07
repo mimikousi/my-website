@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>意味がわかる線形代数 — 学習レビュー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Color Palette */
+    --bg-color: #f8fafc;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --accent-primary: #3b82f6;
+    --accent-secondary: #8b5cf6;
+    --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    --border-color: rgba(226, 232, 240, 0.8);
+    
+    /* Metrics */
+    --radius-xl: 32px;
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-sm: 8px;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.02);
+    --shadow-hover: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.03);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    background-color: var(--bg-color);
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.08) 0px, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Glassmorphism utility */
+  .glass {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Layout */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 60px 24px;
+  }
+
+  /* Hero Section */
+  .hero {
+    position: relative;
+    border-radius: var(--radius-xl);
+    padding: 48px;
+    margin-bottom: 64px;
+    display: flex;
+    gap: 48px;
+    align-items: center;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 6px;
+    background: var(--accent-gradient);
+  }
+  
+  .hero-cover {
+    flex-shrink: 0;
+    position: relative;
+  }
+  .hero-cover img {
+    width: 200px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .hero-cover:hover img {
+    transform: translateY(-8px) scale(1.02);
+  }
+  
+  .hero-content { flex: 1; }
+  .hero-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-primary);
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  
+  .hero h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1.3;
+    margin-bottom: 24px;
+    color: var(--text-main);
+  }
+  .hero h1 span {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .meta-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+  .meta-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .amazon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--text-main);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .amazon-btn:hover {
+    background: var(--accent-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  /* Section Titles */
+  .section-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title .num {
+    background: var(--accent-gradient);
+    color: white;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Bento Grid Layouts */
+  .bento-grid {
+    display: grid;
+    gap: 24px;
+    margin-bottom: 64px;
+  }
+  
+  .card {
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    transition: all 0.3s ease;
+  }
+  .card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-4px);
+  }
+
+  /* Ratings */
+  .ratings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .rating-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 40px;
+    align-items: center;
+    gap: 16px;
+  }
+  .rating-label {
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  .rating-bar-bg {
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .rating-bar-fill {
+    height: 100%;
+    background: var(--accent-gradient);
+    border-radius: 100px;
+    transform-origin: left;
+    animation: slideRight 1s ease-out forwards;
+  }
+  .rating-value {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: var(--accent-primary);
+    text-align: right;
+  }
+
+  /* Verdict Quote */
+  .verdict {
+    position: relative;
+    padding: 40px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.25rem;
+    line-height: 1.8;
+    text-align: center;
+    margin-bottom: 64px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(to right, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
+    border: 1px solid var(--border-color);
+  }
+  .verdict::before, .verdict::after {
+    content: '"';
+    position: absolute;
+    font-size: 4rem;
+    color: rgba(59, 130, 246, 0.1);
+    font-family: 'Inter', sans-serif;
+    line-height: 1;
+  }
+  .verdict::before { top: 20px; left: 20px; }
+  .verdict::after { bottom: -20px; right: 20px; }
+  .verdict strong {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Mapping Grid (2 columns) */
+  .grid-2col {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+  .mapping-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 32px;
+  }
+  .mapping-term {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-main);
+  }
+  .mapping-arrow {
+    color: var(--border-color);
+  }
+  .mapping-arrow svg {
+    width: 24px; height: 24px;
+    stroke: var(--accent-primary);
+  }
+  .mapping-result {
+    font-weight: 600;
+    color: var(--accent-secondary);
+  }
+
+  /* Flow Diagram (PCA) */
+  .flow-container {
+    padding: 48px;
+    text-align: center;
+  }
+  .flow-title {
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--accent-primary);
+  }
+  .flow-desc {
+    color: var(--text-muted);
+    margin-bottom: 40px;
+    font-size: 0.9rem;
+  }
+  .flow-step {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    padding: 20px 32px;
+    border-radius: var(--radius-md);
+    display: inline-block;
+    position: relative;
+    font-weight: 500;
+    box-shadow: var(--shadow-sm);
+    z-index: 2;
+  }
+  .flow-step.dark {
+    background: var(--text-main);
+    color: #fff;
+    border-color: var(--text-main);
+  }
+  .flow-connector {
+    width: 2px;
+    height: 32px;
+    background: var(--border-color);
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .flow-connector::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0;
+    border-style: solid;
+    border-color: var(--border-color) transparent transparent transparent;
+  }
+  .flow-final {
+    background: var(--accent-gradient);
+    color: white;
+    padding: 24px 40px;
+    border-radius: var(--radius-md);
+    display: inline-block;
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+  }
+  .flow-final-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+    margin-bottom: 8px;
+  }
+  .flow-final-text {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  /* Icon Cards (Strengths / Target) */
+  .grid-icon-cards {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .icon-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .icon-wrapper {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: rgba(59, 130, 246, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+  .icon-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  .icon-card p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  /* Comparison */
+  .comparison {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 40px;
+  }
+  .comp-book {
+    flex: 1;
+    text-align: center;
+    padding: 32px 24px;
+    border-radius: var(--radius-md);
+    background: #fff;
+    border: 1px solid var(--border-color);
+  }
+  .comp-book.current {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 1px var(--accent-primary);
+  }
+  .comp-arrow {
+    font-size: 2rem;
+    color: var(--text-muted);
+  }
+  .comp-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-top: 16px;
+  }
+  .comp-tag.blue { background: rgba(59, 130, 246, 0.1); color: var(--accent-primary); }
+  .comp-tag.purple { background: rgba(139, 92, 246, 0.1); color: var(--accent-secondary); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 64px 24px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  /* Animations */
+  @keyframes slideRight {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-up {
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero { flex-direction: column; text-align: center; padding: 32px 24px; }
+    .hero-meta { text-align: left; }
+    .rating-row { grid-template-columns: 1fr; gap: 8px; }
+    .rating-value { text-align: left; }
+    .mapping-card { flex-direction: column; gap: 16px; text-align: center; }
+    .mapping-arrow svg { transform: rotate(90deg); }
+    .comparison { flex-direction: column; }
+    .comp-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <header class="hero glass animate-up">
+    <div class="hero-cover">
+      <img src="https://www.beret.co.jp/uploads/2022/12/405.jpg" alt="意味がわかる線形代数 表紙" />
+    </div>
+    <div class="hero-content">
+      <div class="hero-tag">Book Review & Study Notes</div>
+      <h1>意味がわかる<br><span>線形代数</span></h1>
+      
+      <div class="hero-meta">
+        <div class="meta-item"><span class="meta-label">Author</span><span class="meta-value">石井 俊全</span></div>
+        <div class="meta-item"><span class="meta-label">Publisher</span><span class="meta-value">ベレ出版</span></div>
+        <div class="meta-item"><span class="meta-label">Published</span><span class="meta-value">2011年6月 / 376頁</span></div>
+        <div class="meta-item"><span class="meta-label">Price</span><span class="meta-value">¥2,420（税込）</span></div>
+      </div>
+      
+      <a href="https://www.amazon.co.jp/dp/4860642880" class="amazon-btn" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Amazonでチェック
+      </a>
+    </div>
+  </header>
+
+  <div class="verdict glass animate-up delay-1">
+    「主成分分析って結局なにしてるの？」が腹落ちした本。<br>
+    図解が豊富で、文系向けに極力言葉で表現してくれるのが良い。<br>
+    統計学やデータ分析の初学者にオススメしたい一冊。<br>
+    <strong>線形代数、意味がわかると本当に面白い！</strong>
+  </div>
+
+  <h2 class="section-title animate-up delay-2"><span class="num">1</span>総合評価</h2>
+  <div class="card glass bento-grid animate-up delay-2">
+    <div class="ratings-container">
+      <div class="rating-row">
+        <div class="rating-label">わかりやすさ</div>
+        <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 95%;"></div></div>
+        <div class="rating-value">9.5</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-label">図解の豊富さ</div>
+        <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 95%;"></div></div>
+        <div class="rating-value">9.5</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-label">統計・多変量解析との接続</div>
+        <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 90%;"></div></div>
+        <div class="rating-value">9.0</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-label">言葉での説明</div>
+        <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 100%;"></div></div>
+        <div class="rating-value">10.0</div>
+      </div>
+      <div class="rating-row">
+        <div class="rating-label">初学者へのオススメ度</div>
+        <div class="rating-bar-bg"><div class="rating-bar-fill" style="width: 95%;"></div></div>
+        <div class="rating-value">9.5</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title animate-up"><span class="num">2</span>線形代数から統計学への接続</h2>
+  <div class="bento-grid grid-2col animate-up">
+    <div class="card glass mapping-card">
+      <div class="mapping-term">回転</div>
+      <div class="mapping-arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="mapping-result">因子分析</div>
+    </div>
+    <div class="card glass mapping-card">
+      <div class="mapping-term">基底の取り替え</div>
+      <div class="mapping-arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="mapping-result">主成分分析</div>
+    </div>
+    <div class="card glass mapping-card">
+      <div class="mapping-term">固有値・固有ベクトル</div>
+      <div class="mapping-arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="mapping-result">主成分分析</div>
+    </div>
+    <div class="card glass mapping-card">
+      <div class="mapping-term">対称行列</div>
+      <div class="mapping-arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="mapping-result">分散共分散行列</div>
+    </div>
+  </div>
+
+  <h2 class="section-title animate-up"><span class="num">3</span>秀逸な主成分分析（PCA）コラム</h2>
+  <div class="card glass flow-container bento-grid animate-up">
+    <div class="flow-title">PCA の本質</div>
+    <div class="flow-desc">「データの特徴が一番よく見える方向に座標軸を取り直すこと」</div>
+    
+    <div>
+      <div class="flow-step dark">元のデータ（多次元の観測値）</div>
+      <div class="flow-connector"></div>
+      <div class="flow-step">1. データを中心化（平均を原点に移動）</div>
+      <div class="flow-connector"></div>
+      <div class="flow-step">2. 点のばらつき（2乗和の平均）が最大になる方向を探す</div>
+      <div class="flow-connector"></div>
+      <div class="flow-final">
+        <div class="flow-final-label">The Result</div>
+        <div class="flow-final-text">分散共分散行列の最大固有値に対応する<br>固有ベクトル（＝第1主成分）</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title animate-up"><span class="num">4</span>この本の4つの強み</h2>
+  <div class="bento-grid grid-icon-cards animate-up">
+    <div class="card glass icon-card">
+      <div class="icon-wrapper">💬</div>
+      <h3>言葉で説明してくれる</h3>
+      <p>数式だけでなく、概念を可能な限り日本語の言葉で表現。文系出身者でもストンと腑に落ちる。</p>
+    </div>
+    <div class="card glass icon-card">
+      <div class="icon-wrapper">🎨</div>
+      <h3>図解が豊富</h3>
+      <p>諸概念の図像的イメージをわかりやすく解説。ベクトル空間や線形写像が「見える」ようになる。</p>
+    </div>
+    <div class="card glass icon-card">
+      <div class="icon-wrapper">🔗</div>
+      <h3>統計・多変量解析を意識</h3>
+      <p>主成分分析のコラムをはじめ、統計学や機械学習の応用を常に見据えた構成。</p>
+    </div>
+    <div class="card glass icon-card">
+      <div class="icon-wrapper">📝</div>
+      <h3>演習問題が充実</h3>
+      <p>さらっと読むだけでなく、演習問題を全部解くことで理解が定着する。</p>
+    </div>
+  </div>
+
+  <h2 class="section-title animate-up"><span class="num">5</span>こんな方にオススメ</h2>
+  <div class="bento-grid grid-icon-cards animate-up">
+    <div class="card glass icon-card">
+      <div class="icon-wrapper">📊</div>
+      <h3>統計学・データ分析の初学者</h3>
+      <p>多変量解析に必要な線形代数の基礎をやさしく学べる</p>
+    </div>
+    <div class="card glass icon-card">
+      <div class="icon-wrapper">🔄</div>
+      <h3>線形代数を学び直したい方</h3>
+      <p>大学で学んだが意味まで理解できていなかった方に</p>
+    </div>
+    <div class="card glass icon-card">
+      <div class="icon-wrapper">📚</div>
+      <h3>文系出身の社会人</h3>
+      <p>文系向けに言葉で丁寧に解説されている</p>
+    </div>
+    <div class="card glass icon-card">
+      <div class="icon-wrapper">🤖</div>
+      <h3>機械学習を始めたい方</h3>
+      <p>PCA・因子分析の数学的背景を理解するのに最適</p>
+    </div>
+  </div>
+
+  <h2 class="section-title animate-up"><span class="num">6</span>学習ルート：次に読むなら</h2>
+  <div class="card glass comparison animate-up">
+    <div class="comp-book current">
+      <h3 style="font-family:'Noto Serif JP', serif;">意味がわかる線形代数</h3>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;">図解＋言葉で<br>線形代数の「意味」を理解</p>
+      <span class="comp-tag blue">入門〜初級</span>
+    </div>
+    <div class="comp-arrow">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="comp-book">
+      <h3 style="font-family:'Noto Serif JP', serif;">統計学のための数学入門30講</h3>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;">統計学に特化した<br>線形代数をコンパクトに復習</p>
+      <span class="comp-tag purple">中級〜上級</span>
+    </div>
+  </div>
+
+  <footer class="footer">
+    © Study Review — Designed for clarity.
+  </footer>
+
+</div>
+
+</body>
+</html>
