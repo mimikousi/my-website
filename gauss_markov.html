@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ガウス・マルコフの定理 — 証明の詳細解説</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+    displayMath: [['$$', '$$']],
+    macros: {
+      bm: ["{\\boldsymbol{#1}}", 1],
+      T: "{^\\top}",
+      Cov: "\\operatorname{Cov}",
+      tr: "\\operatorname{tr}"
+    }
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+<style>
+  :root {
+    --bg: #faf8f4;
+    --bg-card: #ffffff;
+    --text: #1a1a1a;
+    --text-muted: #5a5a5a;
+    --accent: #8b2500;
+    --accent-light: #c44d2a;
+    --accent-bg: #fdf0ec;
+    --border: #e0d8cc;
+    --border-light: #ece6da;
+    --highlight: #fffbe6;
+    --step-bg: #f5f2ec;
+    --step-num: #8b2500;
+    --shadow: 0 2px 20px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.9;
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  /* --- Hero --- */
+  .hero {
+    background: linear-gradient(160deg, #1a0a05 0%, #3d1a0a 40%, #6b2a12 100%);
+    color: #fff;
+    padding: 80px 40px 70px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 80% 20%, rgba(200,80,30,0.15), transparent),
+      radial-gradient(ellipse 400px 300px at 20% 80%, rgba(255,200,150,0.08), transparent);
+  }
+  .hero-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-label {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,200,160,0.7);
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 900;
+    font-size: clamp(28px, 5vw, 44px);
+    line-height: 1.35;
+    margin-bottom: 14px;
+  }
+  .hero h1 span {
+    display: block;
+    font-size: 0.5em;
+    font-weight: 400;
+    color: rgba(255,220,200,0.6);
+    margin-top: 8px;
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+  .hero p {
+    font-size: 15px;
+    color: rgba(255,230,210,0.75);
+    max-width: 600px;
+    line-height: 1.8;
+  }
+
+  /* --- Main --- */
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 50px 28px 100px;
+  }
+
+  /* --- Theorem Box --- */
+  .theorem-box {
+    background: var(--bg-card);
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    padding: 36px 40px;
+    margin-bottom: 50px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+  }
+  .theorem-box::before {
+    content: '定理 9.3';
+    position: absolute;
+    top: -14px;
+    left: 28px;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 16px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+  }
+  .theorem-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .theorem-box p {
+    font-size: 15.5px;
+    line-height: 2;
+  }
+
+  /* --- Setup section --- */
+  .setup {
+    background: var(--step-bg);
+    border-left: 4px solid var(--border);
+    border-radius: 0 6px 6px 0;
+    padding: 28px 32px;
+    margin-bottom: 50px;
+  }
+  .setup h2 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  /* --- Steps --- */
+  .step {
+    margin-bottom: 48px;
+    position: relative;
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .step-num {
+    width: 42px;
+    height: 42px;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Source Serif 4', serif;
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .step-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text);
+  }
+
+  .step p, .step li {
+    font-size: 15.5px;
+    line-height: 2.1;
+    margin-bottom: 10px;
+  }
+
+  /* --- Math display --- */
+  .math-block {
+    background: #fdfcfa;
+    border: 1px solid var(--border-light);
+    border-radius: 5px;
+    padding: 20px 28px;
+    margin: 18px 0;
+    overflow-x: auto;
+    text-align: center;
+  }
+  .math-block.highlight {
+    background: var(--highlight);
+    border-color: #e6d88a;
+  }
+  .math-block.accent {
+    background: var(--accent-bg);
+    border-color: rgba(139,37,0,0.2);
+  }
+
+  /* --- Key insight --- */
+  .insight {
+    background: linear-gradient(135deg, #fffbe6 0%, #fff8e0 100%);
+    border: 1px solid #e6d88a;
+    border-radius: 6px;
+    padding: 22px 28px;
+    margin: 22px 0;
+    position: relative;
+  }
+  .insight::before {
+    content: '💡';
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    font-size: 20px;
+    background: var(--bg);
+    padding: 0 6px;
+    border-radius: 50%;
+  }
+  .insight p {
+    font-size: 14.5px;
+    color: #5a4a00;
+    line-height: 1.9;
+  }
+
+  /* --- Conclusion --- */
+  .conclusion {
+    background: var(--bg-card);
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    padding: 32px 36px;
+    margin-top: 50px;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .conclusion::before {
+    content: '結論';
+    position: absolute;
+    top: -14px;
+    left: 28px;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 16px;
+    border-radius: 3px;
+  }
+  .conclusion p {
+    font-size: 15.5px;
+    line-height: 2.1;
+  }
+
+  .qed {
+    text-align: right;
+    font-size: 20px;
+    margin-top: 14px;
+    color: var(--accent);
+  }
+
+  /* --- Intuition footer --- */
+  .intuition {
+    margin-top: 44px;
+    padding: 28px 32px;
+    background: linear-gradient(135deg, #f5f2ec 0%, #ede8df 100%);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .intuition h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+    font-size: 17px;
+    margin-bottom: 10px;
+    color: var(--accent);
+  }
+  .intuition p {
+    font-size: 14.5px;
+    line-height: 2;
+    color: var(--text-muted);
+  }
+
+  /* --- Separator --- */
+  .sep {
+    width: 60px;
+    height: 2px;
+    background: var(--border);
+    margin: 40px auto;
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 640px) {
+    .hero { padding: 50px 20px 45px; }
+    .container { padding: 30px 16px 60px; }
+    .theorem-box, .conclusion { padding: 24px 20px; }
+    .math-block { padding: 14px 16px; }
+    .setup { padding: 20px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-label">Theorem 9.3 — Detailed Proof</div>
+    <h1>ガウス・マルコフの定理
+      <span>Gauss–Markov Theorem</span>
+    </h1>
+    <p>最小2乗推定量が最良線形不偏推定量（BLUE）であることの証明を、行間を補いながら丁寧に解説します。</p>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- Theorem Statement -->
+  <div class="theorem-box">
+    <div class="theorem-title">ガウス・マルコフの定理</div>
+    <p>
+      線形回帰モデル $\bm{y}=\bm{X}\bm{\beta}+\bm{u}$ において、
+      $E[\bm{u}]=\bm{0}$, $\Cov(\bm{u})=\sigma^2\bm{I}$ を仮定する。<br>
+      このとき、最小2乗推定量
+      $\hat{\bm{\beta}}=(\bm{X}\T\bm{X})^{-1}\bm{X}\T\bm{y}$ は、
+      線形かつ不偏な推定量の中で共分散行列を最小にする。<br>
+      すなわち $\hat{\bm{\beta}}$ は
+      <strong>最良線形不偏推定量（BLUE: Best Linear Unbiased Estimator）</strong>である。
+    </p>
+  </div>
+
+  <!-- Model Setup -->
+  <div class="setup">
+    <h2>モデルの前提</h2>
+    <p>
+      $\bm{y}$ は $n\times 1$ の観測ベクトル、
+      $\bm{X}$ は $n\times(k+1)$ のフルランク計画行列、
+      $\bm{\beta}$ は $(k+1)\times 1$ の未知パラメータ、
+      $\bm{u}$ は $n\times 1$ の誤差ベクトルで、
+      $E[\bm{u}]=\bm{0}$, $E[\bm{u}\bm{u}\T]=\sigma^2\bm{I}$ とする。
+    </p>
+  </div>
+
+  <h2 style="font-family:'Noto Serif JP',serif;font-weight:900;font-size:22px;margin-bottom:30px;color:var(--accent);">証 明</h2>
+
+  <!-- Step 1 -->
+  <section class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div class="step-title">一般の線形不偏推定量の設定</div>
+    </div>
+    <p>
+      $\bm{\beta}$ の任意の<strong>線形推定量</strong>は、ある $(k+1)\times n$ 行列 $\bm{C}$ を用いて
+    </p>
+    <div class="math-block">
+      $$\tilde{\bm{\beta}} = \bm{C}\bm{y}$$
+    </div>
+    <p>と表される。この推定量が<strong>不偏</strong>であるための条件を求める。$\bm{y}=\bm{X}\bm{\beta}+\bm{u}$ を代入すると、</p>
+    <div class="math-block">
+      $$E[\bm{C}\bm{y}] = E[\bm{C}(\bm{X}\bm{\beta}+\bm{u})]
+      = \bm{C}\bm{X}\bm{\beta} + \bm{C}\cdot\underbrace{E[\bm{u}]}_{=\bm{0}}
+      = \bm{C}\bm{X}\bm{\beta}$$
+    </div>
+    <p>
+      これが<strong>任意の</strong> $\bm{\beta}$ に対して $E[\bm{Cy}]=\bm{\beta}$ を満たすためには、
+    </p>
+    <div class="math-block accent">
+      $$\bm{C}\bm{X} = \bm{I}_{k+1}$$
+    </div>
+    <p>が必要十分条件である。これが<strong>不偏性の条件</strong>である。</p>
+  </section>
+
+  <!-- Step 2 -->
+  <section class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div class="step-title">線形不偏推定量の共分散行列</div>
+    </div>
+    <p>不偏条件 $\bm{CX}=\bm{I}$ のもとで、$\bm{Cy}$ の共分散行列を計算する。</p>
+    <div class="math-block">
+      $$\Cov(\bm{Cy}) = E\bigl[(\bm{Cy}-\bm{\beta})(\bm{Cy}-\bm{\beta})\T\bigr]$$
+    </div>
+    <p>ここで $\bm{Cy}-\bm{\beta}$ を整理する。</p>
+    <div class="math-block">
+      $$\bm{Cy}-\bm{\beta}
+      = \bm{C}(\bm{X\beta}+\bm{u})-\bm{\beta}
+      = \underbrace{\bm{CX}}_{=\bm{I}}\bm{\beta}+\bm{Cu}-\bm{\beta}
+      = \bm{Cu}$$
+    </div>
+
+    <div class="insight">
+      <p>不偏条件 $\bm{CX}=\bm{I}$ が効いて、$\bm{CX\beta}$ と $\bm{\beta}$ がぴったり相殺する。推定誤差は純粋に $\bm{Cu}$（誤差 $\bm{u}$ の線形変換）だけになる。</p>
+    </div>
+
+    <p>したがって、</p>
+    <div class="math-block">
+      $$\Cov(\bm{Cy})
+      = E[\bm{Cu}(\bm{Cu})\T]
+      = E[\bm{C}\bm{u}\bm{u}\T\bm{C}\T]
+      = \bm{C}\underbrace{E[\bm{u}\bm{u}\T]}_{=\sigma^2\bm{I}}\bm{C}\T
+      = \sigma^2\bm{C}\bm{C}\T$$
+    </div>
+  </section>
+
+  <!-- Step 3 -->
+  <section class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div class="step-title">OLS推定量との差を導入して $\bm{CC}\T$ を展開</div>
+    </div>
+    <p>最小2乗推定量（OLS）に対応する行列を</p>
+    <div class="math-block">
+      $$\bm{C}^* = (\bm{X}\T\bm{X})^{-1}\bm{X}\T$$
+    </div>
+    <p>とおく。任意の線形不偏推定量の行列 $\bm{C}$ に対して、差</p>
+    <div class="math-block">
+      $$\bm{D} \equiv \bm{C}-\bm{C}^*$$
+    </div>
+    <p>を定義する。すなわち $\bm{C}=\bm{D}+\bm{C}^*$ である。これを $\bm{CC}\T$ に代入して展開すると、</p>
+    <div class="math-block">
+      $$\bm{CC}\T
+      = (\bm{D}+\bm{C}^*)(\bm{D}+\bm{C}^*)\T
+      = \bm{D}\bm{D}\T + \bm{D}(\bm{C}^*)\T + \bm{C}^*\bm{D}\T + \bm{C}^*(\bm{C}^*)\T$$
+    </div>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- Step 4 -->
+  <section class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div class="step-title">交差項がゼロ — 証明の核心</div>
+    </div>
+    <p>$\bm{D}(\bm{C}^*)\T = \bm{0}$ を示す。これが証明の<strong>最も重要なステップ</strong>である。</p>
+
+    <p><strong>（4a）$\bm{DX}=\bm{0}$ の確認</strong></p>
+    <div class="math-block">
+      $$\bm{DX}
+      = (\bm{C}-\bm{C}^*)\bm{X}
+      = \bm{CX} - \bm{C}^*\bm{X}$$
+    </div>
+    <p>ここで、</p>
+    <div class="math-block">
+      $$\bm{CX} = \bm{I} \quad\text{（不偏条件）}$$
+      $$\bm{C}^*\bm{X} = (\bm{X}\T\bm{X})^{-1}\bm{X}\T\bm{X} = \bm{I}$$
+    </div>
+    <p>よって、</p>
+    <div class="math-block accent">
+      $$\bm{DX} = \bm{I}-\bm{I} = \bm{0}$$
+    </div>
+
+    <p><strong>（4b）$(\bm{C}^*)\T$ の具体形</strong></p>
+    <p>
+      $\bm{C}^* = (\bm{X}\T\bm{X})^{-1}\bm{X}\T$ の転置を計算する。
+      転置の公式 $(\bm{AB})\T = \bm{B}\T\bm{A}\T$ を繰り返し適用すると、
+    </p>
+    <div class="math-block">
+      $$(\bm{C}^*)\T
+      = \bigl[(\bm{X}\T\bm{X})^{-1}\bm{X}\T\bigr]\T
+      = (\bm{X}\T)\T\bigl[(\bm{X}\T\bm{X})^{-1}\bigr]\T
+      = \bm{X}\bigl[(\bm{X}\T\bm{X})\T\bigr]^{-1}$$
+    </div>
+
+    <div class="insight">
+      <p>
+        <strong>逆行列の転置に関する注意：</strong>
+        一般に $(\bm{A}^{-1})\T = (\bm{A}\T)^{-1}$ が成り立つ。
+        証明の写真では $(\bm{X}\T\bm{X})^{-\top}$ という略記が使われているが、
+        これは $\bigl[(\bm{X}\T\bm{X})^{-1}\bigr]\T = \bigl[(\bm{X}\T\bm{X})\T\bigr]^{-1}$
+        の意味である。
+      </p>
+    </div>
+
+    <p>
+      ここで $\bm{X}\T\bm{X}$ は<strong>対称行列</strong>である（$(\bm{X}\T\bm{X})\T = \bm{X}\T(\bm{X}\T)\T = \bm{X}\T\bm{X}$）。
+      したがってその逆行列も対称であり、
+    </p>
+    <div class="math-block">
+      $$\bigl[(\bm{X}\T\bm{X})\T\bigr]^{-1}
+      = (\bm{X}\T\bm{X})^{-1}$$
+    </div>
+    <p>よって、</p>
+    <div class="math-block highlight">
+      $$(\bm{C}^*)\T = \bm{X}(\bm{X}\T\bm{X})^{-1}$$
+    </div>
+
+    <p><strong>（4c）交差項の計算</strong></p>
+    <div class="math-block">
+      $$\bm{D}(\bm{C}^*)\T
+      = \bm{D}\cdot\bm{X}(\bm{X}\T\bm{X})^{-1}
+      = \underbrace{(\bm{DX})}_{=\bm{0}}(\bm{X}\T\bm{X})^{-1}
+      = \bm{0}$$
+    </div>
+    <p>また、その転置 $\bm{C}^*\bm{D}\T = \bigl[\bm{D}(\bm{C}^*)\T\bigr]\T = \bm{0}\T = \bm{0}$ も成り立つ。</p>
+
+    <div class="insight">
+      <p>
+        $(\bm{C}^*)\T$ が $\bm{X}(\cdots)$ の形をしているので、左から $\bm{D}$ をかけると
+        $\bm{DX}=\bm{0}$ が効いて全体がゼロになる。
+        これは OLS 推定量の「直交性」とも呼ばれる性質である。
+      </p>
+    </div>
+  </section>
+
+  <!-- Step 5 -->
+  <section class="step">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div class="step-title">不等式の導出</div>
+    </div>
+    <p>交差項が消えたので、$\bm{CC}\T$ は次のように簡潔に書ける：</p>
+    <div class="math-block">
+      $$\bm{CC}\T = \bm{C}^*(\bm{C}^*)\T + \bm{DD}\T$$
+    </div>
+    <p>$\sigma^2$ をかけると共分散行列の関係式が得られる：</p>
+    <div class="math-block highlight">
+      $$\Cov(\bm{Cy})
+      = \sigma^2\bm{C}^*(\bm{C}^*)\T + \sigma^2\bm{DD}\T
+      = \Cov(\hat{\bm{\beta}}) + \sigma^2\bm{DD}\T$$
+    </div>
+
+    <p>ここで $\bm{DD}\T$ が<strong>非負定値（半正定値）行列</strong>であることを確認する。任意のベクトル $\bm{a}\in\mathbb{R}^{k+1}$ に対して、</p>
+    <div class="math-block">
+      $$\bm{a}\T\bm{DD}\T\bm{a}
+      = (\bm{D}\T\bm{a})\T(\bm{D}\T\bm{a})
+      = \|\bm{D}\T\bm{a}\|^2
+      \geq 0$$
+    </div>
+
+    <p>
+      したがって $\sigma^2\bm{DD}\T \geq \bm{0}$（半正定値の意味で）であり、
+    </p>
+    <div class="math-block accent">
+      $$\Cov(\bm{Cy}) \geq \Cov(\hat{\bm{\beta}})$$
+    </div>
+    <p>
+      ここで行列の不等式 $\bm{A}\geq\bm{B}$ は「$\bm{A}-\bm{B}$ が非負定値行列」であることを意味する。
+    </p>
+
+    <div class="insight">
+      <p>
+        <strong>「共分散行列が小さい」の意味：</strong>
+        $\Cov(\bm{Cy})-\Cov(\hat{\bm{\beta}})\geq\bm{0}$ は、
+        任意の方向 $\bm{a}$ について $\bm{a}\T\Cov(\bm{Cy})\bm{a}\geq\bm{a}\T\Cov(\hat{\bm{\beta}})\bm{a}$
+        を意味する。特に $\bm{a}=\bm{e}_j$（第 $j$ 成分が1の単位ベクトル）をとれば、
+        個々のパラメータ $\beta_j$ の分散についても OLS が最小であることがわかる。
+      </p>
+    </div>
+  </section>
+
+  <!-- Conclusion -->
+  <div class="conclusion">
+    <p>
+      以上より、任意の線形不偏推定量 $\bm{Cy}$ の共分散行列は、
+      OLS推定量 $\hat{\bm{\beta}}$ の共分散行列以上（半正定値の意味で）となる。<br><br>
+      すなわち $\hat{\bm{\beta}}=(\bm{X}\T\bm{X})^{-1}\bm{X}\T\bm{y}$ は
+      共分散行列を最小にする線形不偏推定量、
+      つまり<strong>最良線形不偏推定量（BLUE）</strong>である。
+    </p>
+    <div class="qed">$\blacksquare$</div>
+  </div>
+
+  <!-- Intuition -->
+  <div class="intuition">
+    <h3>直観的な理解</h3>
+    <p>
+      OLS以外の線形不偏推定量を使うと、差分 $\bm{D}=\bm{C}-\bm{C}^*$ に由来する
+      $\sigma^2\bm{DD}\T$ の分だけ「余計な分散」が共分散行列に上乗せされる。
+      $\bm{DD}\T$ は常に非負定値なので、
+      OLS推定量の分散を下回ることは原理的に不可能である。
+      言い換えれば、OLS推定量は「無駄のない」推定量であり、
+      制約 $\bm{CX}=\bm{I}$（不偏性）を満たす範囲で
+      最も効率的に情報を抽出している。
+    </p>
+  </div>
+
+</main>
+
+</body>
+</html>
